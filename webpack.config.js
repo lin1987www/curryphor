@@ -18,10 +18,7 @@ module.exports = {
     entry: {
         'lib.min': ['react', 'react-dom'],
         'app': ['./src/index.js'],
-        // print: './src/print.js',
-        // another: './src/another-module.js',
-        'fp': ['./src/fp/index.js'],
-        'my_fp': ['./src/my_fp/index.js'],
+        'test': ['./test/index.js'],
     },
     output: {
         // filename: 'main.js',
@@ -55,18 +52,13 @@ module.exports = {
             inject: true,
             title: 'Hot Module Replacement',
             chunks: ['runtime', 'app'],
+            filename: 'index.html',
         }),
         new HtmlWebpackPlugin({
             inject: true,
             title: 'Functional Programing',
-            chunks: ['runtime', 'fp'],
-            filename: 'fp.html',
-        }),
-        new HtmlWebpackPlugin({
-            inject: true,
-            title: 'My Functional Programing',
-            chunks: ['runtime', 'my_fp'],
-            filename: 'my_fp.html',
+            chunks: ['runtime', 'test'],
+            filename: 'test.html',
         }),
     ],
     module: {
@@ -103,6 +95,11 @@ module.exports = {
                         'react'
                     ]
                 }
+            },
+            {
+                test: /test\.js$/,
+                use: 'mocha-loader',
+                exclude: /node_modules/,
             },
             {
                 test: /\.css$/,

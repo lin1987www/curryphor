@@ -23,4 +23,7 @@ npm install --save-dev clean-webpack-plugin html-webpack-plugin uglifyjs-webpack
 npm install --save-dev express webpack-dev-middleware webpack-dev-server
 
 // node 測試用
-npm install --save-dev mocha chai
+npm install --save-dev mocha chai mocha-loader
+
+// 發佈用
+npm publish --access=public

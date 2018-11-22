@@ -1,0 +1,26 @@
+// 建立 package.json
+npm init -y
+
+// webpack
+npm install --save-dev webpack webpack-cli
+
+// babel-loader
+npm install --save-dev babel-loader babel-core babel-preset-env
+
+// babel-loader plugins
+npm install --save-dev babel-plugin-transform-async-to-generator babel-plugin-syntax-dynamic-import babel-plugin-transform-object-rest-spread
+
+// babel-polyfill 用於 babel-loader 中 presets
+npm install --save babel-polyfill babel-preset-react react react-dom
+
+// 其他可用 loader
+npm install --save-dev style-loader css-loader imports-loader file-loader csv-loader xml-loader
+
+// 其他可用 plugins
+npm install --save-dev clean-webpack-plugin html-webpack-plugin uglifyjs-webpack-plugin mini-css-extract-plugin webpack-manifest-plugin webpack-merge
+
+// node express 本機伺服器 (選用)
+npm install --save-dev express webpack-dev-middleware webpack-dev-server
+
+// node 測試用
+npm install --save-dev mocha chai

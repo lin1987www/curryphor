@@ -4,7 +4,6 @@ class Foldable {
     }
 
     constructor() {
-        console.log('Foldable');
     }
 
     reduce(faba, a) {

@@ -9,7 +9,6 @@ class Chain extends Apply {
     // Monad (>>=) do
     constructor() {
         super();
-        console.log('Chain');
     }
 
     cchain(amb) {

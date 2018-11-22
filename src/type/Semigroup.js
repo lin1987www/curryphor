@@ -1,9 +1,9 @@
 class Semigroup {
     constructor() {
-        console.log('Semigroup');
     }
 
     concat() {
+        console.log('Semigroup.[[Prototype]].concat');
         // mappend :: Semigroup => a -> a -> a
     }
 }

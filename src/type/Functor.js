@@ -6,7 +6,6 @@ class Functor {
     }
 
     constructor() {
-        console.log('Functor');
     }
 
     map(fab) {

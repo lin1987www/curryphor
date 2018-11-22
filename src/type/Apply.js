@@ -11,7 +11,6 @@ class Apply extends Functor {
     // Applicative Functor
     constructor() {
         super();
-        console.log('Apply');
     }
 
     ap(fab) {

@@ -9,7 +9,7 @@ const MIX = {
 };
 
 // 之後修改成可以指定 F (constructor 跟 prototype 都是客製化的)  用於之後 curry 後的 Function 結構
-function mix(name, ...fns) {
+const mix = (name, ...fns) => {
     let constructorArrayArray = fns.reduce((accumulator, currentValue) => {
         function recordAllConstructors(constructorArrayArray, constructor, index) {
             if (constructor != MIX.f0) {

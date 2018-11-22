@@ -1,5 +1,5 @@
 // curry :: ((a, b, ...) -> c) -> a -> b -> ... -> c
-function curry(fn, arity) {
+const curry = (fn, arity) => {
     if (typeof fn != "function") {
         // console.log('Only curry on function.');
         return fn;

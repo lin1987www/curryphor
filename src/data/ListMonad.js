@@ -20,6 +20,10 @@ class ListMonad extends Monad {
         }, this.of());
     }
 
+    of(...a) {
+        return this.constructor.of(...a);
+    }
+
     cchain(amb) {
         // Chain m => m a ~> (a -> m b) -> m b
         return this.reduce((mb, a) => {
@@ -27,8 +31,8 @@ class ListMonad extends Monad {
         }, this.of());
     }
 
-    of(...a) {
-        return this.constructor.of(...a);
+    fail(e) {
+        return this.of();
     }
 }
 

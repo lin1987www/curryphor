@@ -11,6 +11,7 @@ class Monoid extends Semigroup {
         // empty :: Monoid a => () -> a
         // 而原本的 Haskell 設計是 常數
         // mempty :: Monoid a => a
+        // 但是常數會變成大家都使用同一個，因此才改成需要呼叫的方式
     }
 
     mconcat() {

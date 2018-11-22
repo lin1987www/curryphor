@@ -11,11 +11,6 @@ class Chain extends Apply {
         super();
     }
 
-    cchain(amb) {
-        console.log('Chain.[[Prototype]].mchain');
-        // Chain m => m a ~> (a -> m b) -> m b
-    }
-
     chain(amb) {
         try {
             // Chain m => m a ~> (a -> m b) -> m b
@@ -24,6 +19,11 @@ class Chain extends Apply {
         catch (e) {
             return this.fail(e);
         }
+    }
+
+    cchain(amb) {
+        console.log('Chain.[[Prototype]].mchain');
+        // Chain m => m a ~> (a -> m b) -> m b
     }
 
     fail(e) {

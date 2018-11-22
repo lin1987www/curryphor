@@ -25,7 +25,7 @@ class ListMonad extends Monad {
         // Chain m => m a ~> (a -> m b) -> m b
         return this.reduce((mb, a) => {
             return mb.concat(amb(a));
-        }, this.constructor.of());
+        }, []);
     }
 }
 

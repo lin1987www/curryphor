@@ -29,7 +29,7 @@ npm install --save-dev mocha chai mocha-loader
 
 
 // 使用使用指令執行測試
-npx mocha --compilers js:babel-core/register ./test/index.js
+npx mocha --require babel-core/register ./test/index.js
 
 // https://github.com/mochajs/mocha/issues/2655
 // https://github.com/mochajs/mocha/wiki/compilers-deprecation

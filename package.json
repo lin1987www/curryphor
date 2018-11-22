@@ -1,11 +1,11 @@
 {
   "name": "curryphor",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Curryphor\r =========",
   "private": false,
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --require babel-core/register ./test/index.js",
     "watch": "webpack --watch",
     "start": "webpack-dev-server --open --config webpack.dev.js",
     "server": "node server.js",
@@ -41,6 +41,11 @@
     "webpack-manifest-plugin": "^2.0.4",
     "webpack-merge": "^4.1.4",
     "xml-loader": "^1.2.1"
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",

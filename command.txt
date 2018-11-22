@@ -25,5 +25,32 @@ npm install --save-dev express webpack-dev-middleware webpack-dev-server
 // node 測試用
 npm install --save-dev mocha chai mocha-loader
 
+// mocha 網站 https://mochajs.org/
+
+
+// 使用使用指令執行測試
+npx mocha --compilers js:babel-core/register ./test/index.js
+
+// https://github.com/mochajs/mocha/issues/2655
+// https://github.com/mochajs/mocha/wiki/compilers-deprecation
+// mocha 設定額外參數 --require babel-core/register  可以在畫面中正常執行 ES6 import
+// 以下為 package.json 額外設定
+package.json
+  "devDependencies": {
+    "mocha": "3.5.3",
+    "babel-core": "6.26.0",
+    "babel-preset-env": "1.6.0"
+  },
+  "babel": {
+    "presets": ["env"]
+  }
+
+
 // 發佈用
 npm publish --access=public
+
+
+
+參考資料
+How to Create and Publish Your First Node.js Module
+https://codeburst.io/how-to-create-and-publish-your-first-node-js-module-444e7585b738

@@ -1,7 +1,7 @@
 {
-  "name": "curryphor",
-  "version": "0.1.1",
-  "description": "",
+  "name": "@username/curryphor",
+  "version": "0.1.2",
+  "description": "Curryphor\r =========",
   "private": false,
   "main": "src/index.js",
   "scripts": {
@@ -46,5 +46,16 @@
     "babel-preset-react": "^6.24.1",
     "react": "^16.6.3",
     "react-dom": "^16.6.3"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lin1987www/curryphor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lin1987www/curryphor/issues"
+  },
+  "homepage": "https://github.com/lin1987www/curryphor#readme"
 }

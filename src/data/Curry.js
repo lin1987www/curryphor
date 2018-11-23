@@ -1,9 +1,10 @@
-import mix from "../mix";
-import Monad from "../type/Monad";
+import mix from '../mix';
+import Monad from '../type/Monad';
 
 const CurryBase = mix('CurryBase', Monad, Function);
 
 class Curry extends CurryBase {
+
     constructor(fn, arity, prependArgs) {
         if (Object.getPrototypeOf(fn) === Curry) {
             // TODO  重做檢驗是否為 curried function
@@ -13,10 +14,10 @@ class Curry extends CurryBase {
         prependArgs = prependArgs || [];
         super();
 
-        function replaceCurryPrototypeOf(curryFunc, self, changedProperties) {
+        function replaceCurryPrototypeOf(curryFunc, self, updateProperties) {
             self = self || Object.getPrototypeOf(curryFunc);
-            changedProperties = changedProperties || {};
-            let newSelf = Object.assign({}, self, changedProperties)
+            updateProperties = updateProperties || {};
+            let newSelf = Object.assign({}, self, updateProperties)
             Object.setPrototypeOf(curryFunc, newSelf);
             Object.setPrototypeOf(newSelf, Curry.prototype);
         }
@@ -24,13 +25,13 @@ class Curry extends CurryBase {
         function curry(...args) {
             if (args.length < arity) {
                 let f = curry.bind(null, ...args);
-                replaceCurryPrototypeOf(f, null, {args: args});
+                replaceCurryPrototypeOf(f, null, {args: args, curry: f});
                 return f;
             }
             return fn.call(null, ...args);
         }
 
-        let self = {fn: fn, arity: arity, args: prependArgs};
+        let self = {fn: fn, arity: arity, args: prependArgs, curry: curry};
 
         // bind with self
         self.map = this.map.bind(self);

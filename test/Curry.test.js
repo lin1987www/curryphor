@@ -1,26 +1,40 @@
 import Curry from "../src/data/Curry";
 
-import {curry, ccurry} from '../src/curry';
 const {assert, expect, should} = require('chai');
 
 describe('Curry', function () {
     describe('#constructor()', function () {
         it('should instanceof', function () {
-            let f = new Curry(() => {
-            });
+            let func = (x, y) => x + y;
+            let f = new Curry(func);
             assert.equal(f instanceof Curry, true);
-            assert.typeOf(f, 'function');
+            let f1 = f(1);
+            assert.equal(f1 instanceof Curry, true);
+            assert.equal(f1(2), 3);
         });
 
-        it('apply', function () {
-            let f = ccurry(function (x,y) {
-                console.log(this);
-                return x+y;
-            });
-            let f1 = f(9);
-            // assert.equal(f1(3), 12);
-            let f2 = f.apply('',[9]);
-            assert.equal(f2(3),12);
+    });
+    describe('#curry', function () {
+        it('#apply()', function () {
+            let func = (x, y) => x + y;
+            let f = new Curry(func);
+            let f1 = f.apply('', [1]);
+            assert.equal(f1.apply('666', [2]), 3);
+            assert.equal(f1.fn, func);
+        });
+        it('#call()', function () {
+            let func = (x, y) => x + y;
+            let f = new Curry(func);
+            let f1 = f.call(null, 1);
+            assert.equal(f1.call('', 2), 3);
+            assert.equal(f1.fn, func);
+        });
+        it('#bind()', function () {
+            let func = (x, y) => x + y;
+            let f = new Curry(func);
+            let f1 = f.bind('', 1)();
+            assert.equal(f1.bind(null, 2)(), 3);
+            assert.equal(f1.fn, func);
         });
     });
 });

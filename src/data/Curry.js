@@ -9,48 +9,30 @@ class Curry extends CurryBase {
             return fn;
         }
         arity = arity || fn.length;
-
         super();
+        let self = {fn: fn, arity: arity};
+        Object.setPrototypeOf(self, Curry.prototype);
 
-        /*
-        let self = function (...args) {
-            if (args.length < this.arity) {
-                return self.bind(null, ...args);
+        function curry(...args) {
+            if (args.length < arity) {
+                let f = curry.bind(null, ...args);
+                self.args = args;
+                return f;
             }
-            return this.fn.call(null, ...args);
+            return fn.call(null, ...args);
         };
-        self.fn = fn;
-        self.arity = arity;
-        self = self.bind(self);
-        */
-
-        // 方法2
-        // let self = curried.bind({fn: fn, arity: arity});
-
-        // create a new instance which we called self
-        let prototype = Object.getPrototypeOf(this);
-        Object.setPrototypeOf(self, prototype);
-
+        Object.setPrototypeOf(curry, self);
+        let curryBind = curry.bind(self)();
+        // bind with self
+        self.map = this.map.bind(self);
 
         // return self instance to replace this
-        return self;
+        return curryBind;
     }
 
-    getThis() {
-        return this;
+    map() {
+        return this.fn;
     }
 }
-
-/*
-function curried(...args) {
-    if (args.length < this.arity) {
-        return curried.bind(this, ...args);
-    }
-    return this.fn.call(this, ...args);
-}
-Object.setPrototypeOf(curried, Curry);
-*/
-
-
 
 export default Curry;

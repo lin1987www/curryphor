@@ -43,7 +43,6 @@ function cclosure(fn, arity, param) {
         if (args.length < arity) {
             return cclosure(fn, arity, args);
         }
-        console.log(fn, arity, args);
         // 使用 this 的話 function 內部的運算會莫名其妙受到 this 的 data 所影響
         return fn.call(this, ...args);
     }

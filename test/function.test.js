@@ -18,6 +18,7 @@ describe('function', function () {
             assert.equal(Object.getPrototypeOf(f), B);
             let f1 = f.bind('');
             assert.equal(Object.getPrototypeOf(f1), B);
+            assert.equal(f === f1, false);
 
             let fa = (x, y) => x + y;
             Object.setPrototypeOf(fa, B);

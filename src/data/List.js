@@ -1,9 +1,9 @@
 import Foldable from "../type/Foldable";
-import Monoid from "../type/Monoid";
 import ListMonad from "./ListMonad";
 import mix from "../mix";
+import ListMonoid from "./ListMonoid";
 
-let ListBase = mix('List', Foldable, Monoid, ListMonad, Array);
+const ListBase = mix('ListBase', Foldable, ListMonoid, ListMonad, Array);
 
 class List extends ListBase {
     constructor(...args) {
@@ -33,11 +33,6 @@ class List extends ListBase {
 
     empty() {
         return this.of();
-    }
-
-    mconcat() {
-        throw new Error('Need to implement.');
-        //  mconcat :: Monoid a => [a] -> a
     }
 }
 

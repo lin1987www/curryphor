@@ -1,6 +1,5 @@
 import List from '../src/data/List';
-
-const {assert, expect, should} = require('chai');  // Using Assert style
+const {assert, expect, should} = require('chai');
 
 describe('List', function () {
     describe('#map()', function () {

@@ -4,6 +4,17 @@ import Monad from '../type/Monad';
 const CurryBase = mix('CurryBase', Monad, Function);
 
 class Curry extends CurryBase {
+    static of(a) {
+        let _a = _ => a;
+        let f_a = new Curry(_a);
+        return f_a;
+    }
+
+    static map(fbc, fab) {
+        fbc = new Curry(fbc);
+        fab = new Curry(fab);
+        return (a) => fbc(fab(a));
+    }
 
     constructor(fn, arity, prependArgs) {
         super();
@@ -24,13 +35,14 @@ class Curry extends CurryBase {
         function curry(...args) {
             if (args.length < arity) {
                 let f = curry.bind(null, ...args);
-                replaceCurryPrototypeOf(f, null, {args: args, curry: f});
+                replaceCurryPrototypeOf(f, null, {curry: f, args: args});
                 return f;
             }
             return fn.call(null, ...args);
         }
 
-        let self = {fn: fn, arity: arity, args: prependArgs, curry: curry};
+        let self = {curry: curry, args: prependArgs, fn: fn, arity: arity};
+        Object.setPrototypeOf(self, Curry.prototype);
 
         // bind with self
         self.map = this.map.bind(self);
@@ -43,12 +55,7 @@ class Curry extends CurryBase {
 
     map(ab) {
         // map :: (b -> c) ~> (a -> b) -> a -> c
-        let fab = new Curry(ab);
-        let fbc = this.curry;
-        let f = (a) => {
-            return fbc(fab(a));
-        };
-        return f;
+        return this.constructor.map(this.curry, ab);
     }
 }
 

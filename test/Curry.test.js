@@ -60,12 +60,46 @@ describe('Curry', function () {
             assert.equal(result, 123);
         });
         it('((b1 -> b2) -> c) -> (a -> (b1 -> b2)) -> a -> c', function () {
+            // f :: ((b1 -> b2) -> c)
             let f = new Curry(fb => fb(100));
-            // (a -> ( b1 -> b2 )) === ((a -> b1) -> b2)
+            // g :: (a -> ( b1 -> b2 )) === g :: ((a -> b1) -> b2)
             let g = (x, y) => x + y + 20;
             let fg = f.map(g);
             let result = fg(3);
             assert.equal(result, 123);
+        });
+        it('(b -> c) -> ((a1 -> a2 -> b) -> a1) -> a2 -> c', function () {
+            // f :: (b -> c)
+            let f = new Curry(b => b + 100);
+            // g :: (a1 -> a2 -> b)
+            let g = new Curry((x, y) => x + y + 20);
+
+            let g1 = g(0);
+            let fg1 = f.map(g1);
+            let result1 = fg1(3);
+            assert.equal(result1, 123);
+
+            let g2 = g(4000);
+            let fg2 = f.map(g2);
+            let result2 = fg2(3);
+            assert.equal(result2, 4123);
+        });
+        it('(b -> c -> d) -> (a -> b) -> a -> c -> d', function () {
+            // f :: (b -> c -> d)
+            let f = new Curry((b, c) => b + c);
+            // g :: (a -> b)
+            let g = (x) => x + 20;
+
+            let fg = f.map(g);
+            // fg1 :: (c -> d) -> c -> d
+            let fg1 = fg(3);
+            let result1 = fg1(100);
+            assert.equal(result1, 123);
+
+            // fg2 :: (c -> d) -> c -> d
+            let fg2 = fg(4);
+            let result2 = fg2(100);
+            assert.equal(result2, 124);
         });
     });
 });

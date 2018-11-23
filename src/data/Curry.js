@@ -6,18 +6,17 @@ const CurryBase = mix('CurryBase', Monad, Function);
 class Curry extends CurryBase {
 
     constructor(fn, arity, prependArgs) {
-        if (Object.getPrototypeOf(fn) === Curry) {
-            // TODO  重做檢驗是否為 curried function
+        super();
+        if (Curry.prototype.isPrototypeOf(fn)) {
             return fn;
         }
         arity = arity || fn.length;
         prependArgs = prependArgs || [];
-        super();
 
         function replaceCurryPrototypeOf(curryFunc, self, updateProperties) {
             self = self || Object.getPrototypeOf(curryFunc);
             updateProperties = updateProperties || {};
-            let newSelf = Object.assign({}, self, updateProperties)
+            let newSelf = Object.assign({}, self, updateProperties);
             Object.setPrototypeOf(curryFunc, newSelf);
             Object.setPrototypeOf(newSelf, Curry.prototype);
         }
@@ -42,8 +41,14 @@ class Curry extends CurryBase {
         return curryBind;
     }
 
-    map() {
-        return this.fn;
+    map(ab) {
+        // map :: (b -> c) ~> (a -> b) -> a -> c
+        let fab = new Curry(ab);
+        let fbc = this.curry;
+        let f = (a) => {
+            return fbc(fab(a));
+        };
+        return f;
     }
 }
 

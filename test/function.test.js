@@ -29,18 +29,19 @@ describe('function', function () {
             let getThis = function () {
                 return this;
             };
-            assert.equal(getThis(), this);
+            // assert.equal(getThis(), this);
             let f = getThis.bind(1);
             assert.equal(f(), 1);
             let g = f.bind(2);
             // Keep first time bind this
             assert.equal(g(), 1);
-
+        });
+        it('this arrow function', function () {
             let getThis2 = () => this;
             assert.equal(getThis2(), this);
             let f2 = getThis2.bind(1);
             // Arrow Function already bind with this when it is to be declared.
-            assert.equal(f(), this);
+            assert.equal(f2(), this);
         });
     });
 });

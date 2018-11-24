@@ -82,12 +82,15 @@ class Curry extends CurryImplement {
     }
 
     map(ab) {
+        // fmap :: (a -> b) -> f a -> f b
+        // TODO 由於就算知道第一個參數是 function 但套用map的決定權在 f a 身上   跟 Fantasy Land 不一樣 好像有錯!!
         // map :: (b -> c) ~> (a -> b) -> a -> c
         if (Function.prototype.isPrototypeOf(ab)) {
             ab = Curry.for(ab);
         } else if (Array.prototype.isPrototypeOf(ab)) {
             ab = List.from(ab);
         }
+        // TODO 移除  constructor   改寫成  ab.map(this.currying)  這是List專用的
         return ab.constructor.map(this.currying, ab);
     }
 

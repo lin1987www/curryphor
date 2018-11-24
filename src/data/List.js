@@ -11,6 +11,13 @@ const ListImplement = mix('ListImplement', ListInterface, ListMonoid, ListMonad,
 
 class List extends ListImplement {
 
+    // TODO 不明原因 Firefox 會有問題
+    static map(ab, fa) {
+        // fmap
+        // map :: (a -> b) -> f a -> f b
+        return fa.map(ab);
+    }
+
     static from(array) {
         if (array instanceof List || !(array instanceof Array)) {
             return array;

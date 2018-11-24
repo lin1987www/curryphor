@@ -90,7 +90,6 @@ describe('Curry', function () {
             let f = Curry.for((b, c) => b + c);
             // g :: (a -> b)
             let g = (x) => x + 20;
-
             let fg = f.map(g);
             // fg1 :: (c -> d) -> c -> d
             let fg1 = fg(3);
@@ -118,13 +117,6 @@ describe('Curry', function () {
             let result2 = ccc(f1, g1, 8, 2);
             assert.equal(result2, 2);
         });
-        it('List.map', function () {
-            // f :: (b -> c)
-            let ab = (x) => x + 100;
-            let fa = [1, 2, 3];
-            let result1 = Curry.for(ab).map(fa);
-            expect(result1).to.deep.equal(List.of(101, 102, 103));
-        });
     });
     describe('#ap', function () {
         it('Curry.ap', function () {
@@ -136,6 +128,19 @@ describe('Curry', function () {
             assert.equal(result, 10 / (10 + 90));
             result = Curry.for(f).ap(g)(x);
             assert.equal(result, 10 / (10 + 90));
+        });
+    });
+    describe('#error', function () {
+        it('List.map', function () {
+            // f :: (b -> c)
+            let ab = (x) => x + 100;
+            let fa = List.from([1, 2, 3]);
+            ab = Curry.for(ab);
+            // TODO Firefox 可正常執行版本， 開發Flip 調整 Curry.map 的實作方式
+            // let result1 =  fa.map(ab);
+            let result1 = ab.map(fa);
+            console.log(result1);
+            expect(result1).to.deep.equal(List.of(101, 102, 103));
         });
     });
 });

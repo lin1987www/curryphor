@@ -2,10 +2,14 @@ import Foldable from "../type/Foldable";
 import ListMonad from "./ListMonad";
 import mix from "../mix";
 import ListMonoid from "./ListMonoid";
+import Monoid from "../type/Monoid";
+import Monad from "../type/Monad";
 
-const ListBase = mix('ListBase', Foldable, ListMonoid, ListMonad, Array);
+const ListInterface = mix('ListInterface', Foldable, Monoid, Monad);
 
-class List extends ListBase {
+const ListImplement = mix('ListImplement', ListInterface, ListMonoid, ListMonad, Array);
+
+class List extends ListImplement {
     constructor(...args) {
         super();
 

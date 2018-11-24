@@ -1,7 +1,16 @@
 import mix from '../mix';
 import Monad from '../type/Monad';
 
-const CurryBase = mix('CurryBase', Monad, Function);
+const CurryInterface = mix('CurryInterface', Monad);
+
+const CurryImplement = mix('CurryImplement', CurryInterface, Function);
+
+// TODO  Something her between Curry and CurryImplement
+class CurryBase extends CurryImplement {
+    constructor() {
+        super();
+    }
+}
 
 class Curry extends CurryBase {
     static of(a) {

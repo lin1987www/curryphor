@@ -1,4 +1,5 @@
 import Curry from "../src/data/Curry";
+import List from '../src/data/List';
 
 const {assert, expect, should} = require('chai');
 
@@ -117,6 +118,24 @@ describe('Curry', function () {
             let result2 = ccc(f1, g1, 8, 2);
             assert.equal(result2, 2);
         });
-
+        it('List.map', function () {
+            // f :: (b -> c)
+            let ab = (x) => x + 100;
+            let fa = [1, 2, 3];
+            let result1 = Curry.for(ab).map(fa);
+            expect(result1).to.deep.equal(List.of(101, 102, 103));
+        });
+    });
+    describe('#ap', function () {
+        it('Curry.ap', function () {
+            let f = (x, y) => x / y;
+            let g = (x) => x + 90;
+            let fxgx = Curry.ap(f, g);
+            let x = 10;
+            let result = fxgx(x);
+            assert.equal(result, 10 / (10 + 90));
+            result = Curry.for(f).ap(g)(x);
+            assert.equal(result, 10 / (10 + 90));
+        });
     });
 });

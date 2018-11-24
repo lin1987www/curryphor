@@ -10,6 +10,4 @@ if (typeof module !== 'undefined' && module.exports) {
     // is browser
     window.List = List;
     window.Curry = Curry;
-    window.curry = curry;
-    window.ccurry = ccurry;
 }

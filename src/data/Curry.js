@@ -1,5 +1,6 @@
 import mix from '../mix';
 import Monad from '../type/Monad';
+import List from "./List";
 
 const CurryInterface = mix('CurryInterface', Monad);
 
@@ -7,6 +8,9 @@ const CurryImplement = mix('CurryImplement', CurryInterface, Function);
 
 class Curry extends CurryImplement {
     static for(fn, arity, prependArgs) {
+        if (Curry.prototype.isPrototypeOf(fn)) {
+            return fn;
+        }
         return new Curry(fn, arity, prependArgs);
     }
 
@@ -16,18 +20,26 @@ class Curry extends CurryImplement {
         return f_a;
     }
 
-    static map(fbc, fab) {
-        fbc = Curry.for(fbc);
-        fab = Curry.for(fab);
-        let compose = (a) => fbc(fab(a));
+    static map(bc, ab) {
+        // map :: (b -> c) -> (a -> b) -> a -> c
+        // compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k
+        bc = Curry.for(bc);
+        ab = Curry.for(ab);
+        let compose = (a) => bc(ab(a));
         return Curry.for(compose);
+    }
+
+    static ap(aa0b, aa0) {
+        // (<*>) :: Applicative f => f (a -> b) -> f a -> f b
+        // (<*>) :: ( a-> (a0 -> b)) -> (a -> a0) -> a -> b
+        aa0b = Curry.for(aa0b);
+        aa0 = Curry.for(aa0);
+        let apFunctor = (a) => aa0b(a, aa0(a));
+        return Curry.for(apFunctor);
     }
 
     constructor(fn, arity, prependArgs) {
         super();
-        if (Curry.prototype.isPrototypeOf(fn)) {
-            return fn;
-        }
         arity = arity || fn.length;
         prependArgs = prependArgs || [];
 
@@ -61,6 +73,7 @@ class Curry extends CurryImplement {
         let self = createPrototypeInstance({currying: currying, args: prependArgs, fn: fn, arity: arity});
         // bind with self
         self.map = this.map.bind(self);
+        self.ap = this.ap.bind(self);
         // return curryBind instance to replace return this
         replacePrototypeInstance(currying, self);
 
@@ -70,7 +83,17 @@ class Curry extends CurryImplement {
 
     map(ab) {
         // map :: (b -> c) ~> (a -> b) -> a -> c
-        return Curry.map(this.currying, ab);
+        if (Function.prototype.isPrototypeOf(ab)) {
+            ab = Curry.for(ab);
+        } else if (Array.prototype.isPrototypeOf(ab)) {
+            ab = List.from(ab);
+        }
+        return ab.constructor.map(this.currying, ab);
+    }
+
+    ap(g) {
+        // map :: (b -> c) ~> (a -> b) -> a -> c
+        return Curry.ap(this.currying, g);
     }
 }
 

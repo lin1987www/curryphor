@@ -1,12 +1,12 @@
 class Foldable {
-    static reduce(faba, a, fb) {
-        return fb.reduce(faba, a);
+    static reduce(aba, a, fb) {
+        return fb.reduce(aba, a);
     }
 
     constructor() {
     }
 
-    reduce(faba, a) {
+    reduce(aba, a) {
         console.log('Foldable.[[Prototype]].reduce');
         // Foldable f => f b ~> (a -> b -> a) -> a -> a
     }

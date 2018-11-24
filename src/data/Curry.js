@@ -30,8 +30,10 @@ class Curry extends CurryImplement {
     }
 
     static ap(aa0b, aa0) {
-        // (<*>) :: Applicative f => f (a -> b) -> f a -> f b
-        // (<*>) :: ( a-> (a0 -> b)) -> (a -> a0) -> a -> b
+        // Haskell
+        // (<*>) :: f (a -> b) -> f a -> f b
+        // (<*>) :: (a -> (a0 -> b)) -> (a -> a0) -> a -> b
+        // (<*>) f g x = f( x (g x))
         aa0b = Curry.for(aa0b);
         aa0 = Curry.for(aa0);
         let apFunctor = (a) => aa0b(a, aa0(a));
@@ -81,10 +83,17 @@ class Curry extends CurryImplement {
         return curryBind;
     }
 
-    map(ab) {
+    mapH(ab) {
+        // Fantasy Land
+        // map :: Functor f => (a -⁠> b, f a) -⁠> f b
+        // map :: Functor f => f a ~> (a -> b) -> f b
+        // map :: (b -> c) -> (a -> b) -> a -> c
+        // compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k
+        //
+        // Haskell
         // fmap :: (a -> b) -> f a -> f b
-        // TODO 由於就算知道第一個參數是 function 但套用map的決定權在 f a 身上   跟 Fantasy Land 不一樣 好像有錯!!
-        // map :: (b -> c) ~> (a -> b) -> a -> c
+        // (.) :: (b -> c) -> (a -> b) -> a -> c
+        // (.) f g = \x -> f (g x)
         if (Function.prototype.isPrototypeOf(ab)) {
             ab = Curry.for(ab);
         } else if (Array.prototype.isPrototypeOf(ab)) {
@@ -94,8 +103,29 @@ class Curry extends CurryImplement {
         return ab.constructor.map(this.currying, ab);
     }
 
-    ap(g) {
-        // map :: (b -> c) ~> (a -> b) -> a -> c
+    ap(f) {
+        // Fantasy Land
+        // ap :: Apply f => (f (a -⁠> b), f a) -⁠> f b
+        // ap :: Apply f => f a ~> f (a -> b) -> f b
+        // ap g f = \x -> f( x (g x))
+        //
+        // Haskell
+        // (<*>) :: f (a -> b) -> f a -> f b
+        // (<*>) :: (a -> (a0 -> b)) -> (a -> a0) -> a -> b
+        // (<*>) f g = \x -> f( x (g x))
+        return Curry.ap(f, this.currying);
+    }
+
+    apH(g) {
+        // Fantasy Land
+        // ap :: Apply f => (f (a -⁠> b), f a) -⁠> f b
+        // ap :: Apply f => f a ~> f (a -> b) -> f b
+        // ap :: Apply f =>
+        //
+        // Haskell
+        // (<*>) :: f (a -> b) -> f a -> f b
+        // (<*>) :: (a -> (a0 -> b)) -> (a -> a0) -> a -> b
+        // (<*>) f g = \x -> f( x (g x))
         return Curry.ap(this.currying, g);
     }
 }

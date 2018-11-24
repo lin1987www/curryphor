@@ -21,7 +21,6 @@ describe('Curry', function () {
             let result2 = f5(10);
             assert.equal(result2, 41);
         });
-
     });
     describe('#curry', function () {
         it('#apply()', function () {
@@ -56,7 +55,7 @@ describe('Curry', function () {
         it('(b -> c) -> (a -> b) -> a -> c', function () {
             let f = Curry.for((x) => x + 100);
             let g = (x) => x + 20;
-            let fg = f.map(g);
+            let fg = f.mapH(g);
             let result = fg(3);
             assert.equal(result, 123);
         });
@@ -65,7 +64,7 @@ describe('Curry', function () {
             let f = Curry.for(fb => fb(100));
             // g :: (a -> ( b1 -> b2 )) === g :: ((a -> b1) -> b2)
             let g = (x, y) => x + y + 20;
-            let fg = f.map(g);
+            let fg = f.mapH(g);
             let result = fg(3);
             assert.equal(result, 123);
         });
@@ -76,12 +75,12 @@ describe('Curry', function () {
             let g = Curry.for((x, y) => x + y + 20);
 
             let g1 = g(0);
-            let fg1 = f.map(g1);
+            let fg1 = f.mapH(g1);
             let result1 = fg1(3);
             assert.equal(result1, 123);
 
             let g2 = g(4000);
-            let fg2 = f.map(g2);
+            let fg2 = f.mapH(g2);
             let result2 = fg2(3);
             assert.equal(result2, 4123);
         });
@@ -90,7 +89,7 @@ describe('Curry', function () {
             let f = Curry.for((b, c) => b + c);
             // g :: (a -> b)
             let g = (x) => x + 20;
-            let fg = f.map(g);
+            let fg = f.mapH(g);
             // fg1 :: (c -> d) -> c -> d
             let fg1 = fg(3);
             let result1 = fg1(100);
@@ -126,7 +125,7 @@ describe('Curry', function () {
             let x = 10;
             let result = fxgx(x);
             assert.equal(result, 10 / (10 + 90));
-            result = Curry.for(f).ap(g)(x);
+            result = Curry.for(f).apH(g)(x);
             assert.equal(result, 10 / (10 + 90));
         });
     });
@@ -136,9 +135,7 @@ describe('Curry', function () {
             let ab = (x) => x + 100;
             let fa = List.from([1, 2, 3]);
             ab = Curry.for(ab);
-            // TODO Firefox 可正常執行版本， 開發Flip 調整 Curry.map 的實作方式
-            // let result1 =  fa.map(ab);
-            let result1 = ab.map(fa);
+            let result1 = ab.mapH(fa);
             console.log(result1);
             expect(result1).to.deep.equal(List.of(101, 102, 103));
         });

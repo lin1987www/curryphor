@@ -6,7 +6,7 @@ describe('Curry', function () {
     describe('#constructor()', function () {
         it('should instanceof', function () {
             let func = (x, y, z, a, b) => x + y + z + a + b;
-            let f = new Curry(func);
+            let f = Curry.for(func);
             assert.equal(f instanceof Curry, true);
             let f1 = f(1);
             assert.equal(f1 instanceof Curry, true);
@@ -25,35 +25,35 @@ describe('Curry', function () {
     describe('#curry', function () {
         it('#apply()', function () {
             let func = (x, y) => x + y;
-            let f = new Curry(func);
+            let f = Curry.for(func);
             let f1 = f.apply('', [1]);
             assert.equal(f1.apply('666', [2]), 3);
             assert.equal(f1.fn, func);
         });
         it('#call()', function () {
             let func = (x, y) => x + y;
-            let f = new Curry(func);
+            let f = Curry.for(func);
             let f1 = f.call(null, 1);
             assert.equal(f1.call('', 2), 3);
             assert.equal(f1.fn, func);
         });
         it('#bind()', function () {
             let func = (x, y) => x + y;
-            let f = new Curry(func);
+            let f = Curry.for(func);
             let f1 = f.bind('', 1)();
             assert.equal(f1.bind(null, 2)(), 3);
             assert.equal(f1.fn, func);
         });
         it('#curry()', function () {
             let func = (x, y) => x + y;
-            let f = new Curry(func);
-            let f1 = new Curry(f);
+            let f = Curry.for(func);
+            let f1 = Curry.for(f);
             assert.equal(f, f1);
         });
     });
     describe('#map', function () {
         it('(b -> c) -> (a -> b) -> a -> c', function () {
-            let f = new Curry((x) => x + 100);
+            let f = Curry.for((x) => x + 100);
             let g = (x) => x + 20;
             let fg = f.map(g);
             let result = fg(3);
@@ -61,7 +61,7 @@ describe('Curry', function () {
         });
         it('((b1 -> b2) -> c) -> (a -> (b1 -> b2)) -> a -> c', function () {
             // f :: ((b1 -> b2) -> c)
-            let f = new Curry(fb => fb(100));
+            let f = Curry.for(fb => fb(100));
             // g :: (a -> ( b1 -> b2 )) === g :: ((a -> b1) -> b2)
             let g = (x, y) => x + y + 20;
             let fg = f.map(g);
@@ -70,9 +70,9 @@ describe('Curry', function () {
         });
         it('(b -> c) -> ((a1 -> a2 -> b) -> a1) -> a2 -> c', function () {
             // f :: (b -> c)
-            let f = new Curry(b => b + 100);
+            let f = Curry.for(b => b + 100);
             // g :: (a1 -> a2 -> b)
-            let g = new Curry((x, y) => x + y + 20);
+            let g = Curry.for((x, y) => x + y + 20);
 
             let g1 = g(0);
             let fg1 = f.map(g1);
@@ -86,7 +86,7 @@ describe('Curry', function () {
         });
         it('(b -> c -> d) -> (a -> b) -> a -> c -> d', function () {
             // f :: (b -> c -> d)
-            let f = new Curry((b, c) => b + c);
+            let f = Curry.for((b, c) => b + c);
             // g :: (a -> b)
             let g = (x) => x + 20;
 
@@ -101,5 +101,22 @@ describe('Curry', function () {
             let result2 = fg2(100);
             assert.equal(result2, 124);
         });
+        it('Curry.map', function () {
+            // f :: (b -> c)
+            let f = (x) => x + 100;
+            // g :: (a -> b)
+            let g = (x) => x + 20;
+            let c = Curry.map;
+            let fg = c(f, g)
+            let result1 = fg(3);
+            assert.equal(result1, 123);
+
+            let ccc = c(c, c);
+            let f1 = x => x / 2;
+            let g1 = (x, y) => x / y;
+            let result2 = ccc(f1, g1, 8, 2);
+            assert.equal(result2, 2);
+        });
+
     });
 });

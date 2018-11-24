@@ -4,9 +4,6 @@ import function_test from './function.test'
 import List from '../src/data/List';
 import Curry from '../src/data/Curry';
 
-import {curry, ccurry} from '../src/curry';
-
-
 if (typeof module !== 'undefined' && module.exports) {
     // is node
 } else {

@@ -20,25 +20,24 @@ class List extends ListImplement {
 
     constructor(...args) {
         super();
-        // create a new instance which we called self
-        let self = new Array(...args);
-        Object.setPrototypeOf(self, this);
-
-        // bind with self
+        // create a new instance which we called subThing
+        let subThing = new Array(...args);
+        Object.setPrototypeOf(subThing, this);
+        // bind with subThing
         // Monad
-        this.map = this.map.bind(self);
-        this.ap = this.ap.bind(self);
-        this.chain = this.chain.bind(self);
+        this.map = this.map.bind(subThing);
+        this.ap = this.ap.bind(subThing);
+        this.chain = this.chain.bind(subThing);
         // Semigroup
-        this.concat = this.concat.bind(self);
+        this.concat = this.concat.bind(subThing);
         // Monoid
-        this.empty = this.empty.bind(self);
-        this.mconcat = this.mconcat.bind(self);
+        this.empty = this.empty.bind(subThing);
+        this.mconcat = this.mconcat.bind(subThing);
         // Foldable
-        this.reduce = this.reduce.bind(self);
-        this.reduceRight = this.reduceRight.bind(self);
-        // return self instance to replace this
-        return self;
+        this.reduce = this.reduce.bind(subThing);
+        this.reduceRight = this.reduceRight.bind(subThing);
+        // return subThing instance to replace this
+        return subThing;
     }
 
     map(ab) {

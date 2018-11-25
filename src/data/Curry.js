@@ -50,48 +50,8 @@ class Curry extends CurryImplement {
         arity = arity || fn.length;
         prependArgs = prependArgs || [];
 
-        function createPrototypeInstance(...obj) {
-            let prototypeInstance = Object.assign({}, ...obj);
-            Object.setPrototypeOf(prototypeInstance, Curry.prototype);
-            return prototypeInstance;
-        }
-
-        function replacePrototypeInstance(curryFunction, self, updateProperties) {
-            self = self || Object.getPrototypeOf(curryFunction);
-            updateProperties = updateProperties || {};
-            let newSelf = createPrototypeInstance(self, updateProperties);
-            Object.setPrototypeOf(curryFunction, newSelf);
-        }
-
-        function currying(...args) {
-            if (args.length < arity) {
-                let f = currying.bind(null, ...args);
-                replacePrototypeInstance(f, null, {currying: f, args: args.slice()});
-                return f;
-            } else if (args.length == arity) {
-                let result = fn.call(null, ...args);
-                return result;
-            } else {
-                let args1 = args.slice(0, arity);
-                let args2 = args.slice(arity);
-                let next = fn.call(null, ...args1);
-                return next(...args2);
-            }
-        };
-        let self = createPrototypeInstance({currying: currying, args: prependArgs.slice(), fn: fn, arity: arity});
-        /*
-        // bind with self
-        self.map = this.map.bind(self);
-        self.mapH = this.mapH(self);
-        self.ap = this.ap.bind(self);
-        self.apH = this.apH.bind(self);
-        */
-        // return curryBind instance to replace return this
-        replacePrototypeInstance(currying, self);
-
-        let curryBind = currying.bind(null, ...prependArgs);
-        replacePrototypeInstance(curryBind, null, {currying: curryBind});
-        return curryBind;
+        let curryInstance = curry(fn, arity, prependArgs);
+        return curryInstance;
     }
 
     map(bc) {
@@ -147,6 +107,56 @@ class Curry extends CurryImplement {
         // (<*>) f g = \x -> f( x (g x))
         return Curry.ap(this, g);
     }
+}
+
+function curryingBind(fn, arity, prependArgs) {
+    function currying(...args) {
+        if (args.length < arity) {
+            let f = curry(fn, arity, args);
+            return f;
+        } else if (args.length == arity) {
+            let result = fn.call(null, ...args);
+            return result;
+        } else {
+            let args1 = args.slice(0, arity);
+            let args2 = args.slice(arity);
+            let next = fn.call(null, ...args1);
+            return next(...args2);
+        }
+    };
+
+    /*
+    let self = Object.create(Curry.prototype);
+    Object.setPrototypeOf(currying, self);
+    let instance = currying.bind(null, ...prependArgs);
+    // bind
+    let p = Curry.prototype;
+    self.map = p.map.bind(instance);
+    self.mapH = p.mapH.bind(instance);
+    self.ap = p.ap.bind(instance);
+    self.apH = p.apH.bind(instance);
+    */
+
+    Object.setPrototypeOf(currying, Curry.prototype);
+    let instance = currying.bind(null, ...prependArgs);
+
+    return instance;
+}
+
+function curry(fn, arity, prependArgs) {
+    let curryingInstance = curryingBind(fn, arity, prependArgs);
+    curryingInstance.currying = curryingInstance;
+    curryingInstance.fn = fn;
+    curryingInstance.arity = arity;
+    curryingInstance.args = prependArgs;
+    //
+    let p = Curry.prototype;
+    curryingInstance.map = p.map.bind(curryingInstance);
+    curryingInstance.mapH = p.mapH.bind(curryingInstance);
+    curryingInstance.ap = p.ap.bind(curryingInstance);
+    curryingInstance.apH = p.apH.bind(curryingInstance);
+    //
+    return curryingInstance;
 }
 
 export default Curry;

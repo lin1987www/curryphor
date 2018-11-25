@@ -95,9 +95,10 @@ describe('Curry', function () {
             let g = Curry.it((x, y) => {
                 return x + y + 20;
             });
-            // TODO 之前有問題  測試到 參數 This 傳遞間就變成 curring  應該要是 bound curring 才對
+
             let g1 = g(0);
-            let fg1 = f.mapH(g1);
+            let fmapH = f.mapH;
+            let fg1 = fmapH(g1);
             let result1 = fg1(3);
             assert.equal(result1, 123);
 

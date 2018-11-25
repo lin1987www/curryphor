@@ -109,12 +109,10 @@ class Curry extends CurryImplement {
         } else if (Array.prototype.isPrototypeOf(ab)) {
             ab = List.from(ab);
         }
-
         if (Curry.prototype.isPrototypeOf(ab)) {
             // Avoid call ab.map(this) error.
             return Curry.map(this, ab);
         }
-
         return ab.map(this);
     }
 

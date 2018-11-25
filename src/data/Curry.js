@@ -7,7 +7,7 @@ const CurryInterface = mix('CurryInterface', Monad);
 const CurryImplement = mix('CurryImplement', CurryInterface, Function);
 
 class Curry extends CurryImplement {
-    static for(fn, arity, prependArgs) {
+    static it(fn, arity, prependArgs) {
         if (Curry.prototype.isPrototypeOf(fn)) {
             return fn;
         }
@@ -16,21 +16,21 @@ class Curry extends CurryImplement {
 
     static of(a) {
         let _a = _ => a;
-        let f_a = Curry.for(_a);
+        let f_a = Curry.it(_a);
         return f_a;
     }
 
     static map(bc, ab) {
         // map :: (b -> c) -> (a -> b) -> a -> c
         // compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k
-        bc = Curry.for(bc);
-        ab = Curry.for(ab);
+        bc = Curry.it(bc);
+        ab = Curry.it(ab);
         let compose = function (a) {
             let b = ab(a);
             let c = bc(b);
             return c;
         }
-        let c = Curry.for(compose);
+        let c = Curry.it(compose);
         return c;
     }
 
@@ -39,10 +39,10 @@ class Curry extends CurryImplement {
         // (<*>) :: f (a -> b) -> f a -> f b
         // (<*>) :: (a -> (a0 -> b)) -> (a -> a0) -> a -> b
         // (<*>) f g x = f( x (g x))
-        aa0b = Curry.for(aa0b);
-        aa0 = Curry.for(aa0);
+        aa0b = Curry.it(aa0b);
+        aa0 = Curry.it(aa0);
         let apFunctor = (a) => aa0b(a, aa0(a));
-        return Curry.for(apFunctor);
+        return Curry.it(apFunctor);
     }
 
     constructor(fn, arity, prependArgs) {
@@ -79,9 +79,13 @@ class Curry extends CurryImplement {
             }
         };
         let self = createPrototypeInstance({currying: currying, args: prependArgs.slice(), fn: fn, arity: arity});
+        /*
         // bind with self
         self.map = this.map.bind(self);
+        self.mapH = this.mapH(self);
         self.ap = this.ap.bind(self);
+        self.apH = this.apH.bind(self);
+        */
         // return curryBind instance to replace return this
         replacePrototypeInstance(currying, self);
 
@@ -105,14 +109,16 @@ class Curry extends CurryImplement {
         // (.) :: (b -> c) -> (a -> b) -> a -> c
         // (.) f g = \x -> f (g x)
         if (Function.prototype.isPrototypeOf(ab)) {
-            ab = Curry.for(ab);
+            ab = Curry.it(ab);
         } else if (Array.prototype.isPrototypeOf(ab)) {
             ab = List.from(ab);
         }
+        /*
         if (Curry.prototype.isPrototypeOf(ab)) {
             // Avoid call ab.map(this) error.
             return Curry.map(this, ab);
         }
+        */
         return ab.map(this);
     }
 

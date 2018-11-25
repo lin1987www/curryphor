@@ -18,12 +18,6 @@ class Apply extends Functor {
         // 跟 Haskell 定義相反，但是結果一致! 由 fab fa 的巢狀結構
         // Apply f => f a ~> f (a -⁠> b) -⁠> f b
     }
-
-    apH(fa) {
-        console.log('Apply.[[Prototype]].apH');
-        // 跟 Haskell 定義相反，但是結果一致! 由 fab fa 的巢狀結構
-        // Apply f => f (a -⁠> b) -> f a -⁠> f b
-    }
 }
 
 export default Apply;

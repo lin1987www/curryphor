@@ -1,6 +1,6 @@
 const MIX = {
     constructors: Symbol('MIX.constructors'),
-    f0: Object.getPrototypeOf(Function),
+    fPrototype: Function.prototype,
     fPropertyNames: Object.getOwnPropertyNames(function () {
     }),
     fPrototypePropertyNames: Object.getOwnPropertyNames(function () {
@@ -12,7 +12,7 @@ const MIX = {
 const mix = (name, ...fns) => {
     let constructorArrayArray = fns.reduce((accumulator, currentValue) => {
         function recordAllConstructors(constructorArrayArray, constructor, index) {
-            if (constructor != MIX.f0) {
+            if (constructor != MIX.fPrototype) {
                 let constructorArray;
                 if (index < constructorArrayArray.length) {
                     constructorArray = constructorArrayArray[index];

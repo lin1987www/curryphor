@@ -25,8 +25,13 @@ class Curry extends CurryImplement {
         // compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k
         bc = Curry.for(bc);
         ab = Curry.for(ab);
-        let compose = (a) => bc(ab(a));
-        return Curry.for(compose);
+        let compose = function (a) {
+            let b = ab(a);
+            let c = bc(b);
+            return c;
+        }
+        let c = Curry.for(compose);
+        return c;
     }
 
     static ap(aa0b, aa0) {
@@ -61,10 +66,11 @@ class Curry extends CurryImplement {
         function currying(...args) {
             if (args.length < arity) {
                 let f = currying.bind(null, ...args);
-                replacePrototypeInstance(f, null, {currying: f, args: args});
+                replacePrototypeInstance(f, null, {currying: f, args: args.slice()});
                 return f;
             } else if (args.length == arity) {
-                return fn.call(null, ...args);
+                let result = fn.call(null, ...args);
+                return result;
             } else {
                 let args1 = args.slice(0, arity);
                 let args2 = args.slice(arity);
@@ -72,7 +78,7 @@ class Curry extends CurryImplement {
                 return next(...args2);
             }
         };
-        let self = createPrototypeInstance({currying: currying, args: prependArgs, fn: fn, arity: arity});
+        let self = createPrototypeInstance({currying: currying, args: prependArgs.slice(), fn: fn, arity: arity});
         // bind with self
         self.map = this.map.bind(self);
         self.ap = this.ap.bind(self);
@@ -80,17 +86,21 @@ class Curry extends CurryImplement {
         replacePrototypeInstance(currying, self);
 
         let curryBind = currying.bind(null, ...prependArgs);
+        replacePrototypeInstance(curryBind, null, {currying: curryBind});
         return curryBind;
     }
 
-    mapH(ab) {
+    map(bc) {
         // Fantasy Land
         // map :: Functor f => (a -⁠> b, f a) -⁠> f b
         // map :: Functor f => f a ~> (a -> b) -> f b
-        // map :: (b -> c) -> (a -> b) -> a -> c
-        // compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k
-        //
+        // map :: (a -> b) -> (b -> c) -> a -> c
+        return Curry.map(bc, this);
+    }
+
+    mapH(ab) {
         // Haskell
+        // compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k
         // fmap :: (a -> b) -> f a -> f b
         // (.) :: (b -> c) -> (a -> b) -> a -> c
         // (.) f g = \x -> f (g x)
@@ -99,8 +109,13 @@ class Curry extends CurryImplement {
         } else if (Array.prototype.isPrototypeOf(ab)) {
             ab = List.from(ab);
         }
-        // TODO 移除  constructor   改寫成  ab.map(this.currying)  這是List專用的
-        return ab.constructor.map(this.currying, ab);
+
+        if (Curry.prototype.isPrototypeOf(ab)) {
+            // Avoid call ab.map(this) error.
+            return Curry.map(this, ab);
+        }
+
+        return ab.map(this);
     }
 
     ap(f) {
@@ -113,7 +128,7 @@ class Curry extends CurryImplement {
         // (<*>) :: f (a -> b) -> f a -> f b
         // (<*>) :: (a -> (a0 -> b)) -> (a -> a0) -> a -> b
         // (<*>) f g = \x -> f( x (g x))
-        return Curry.ap(f, this.currying);
+        return Curry.ap(f, this);
     }
 
     apH(g) {
@@ -126,7 +141,7 @@ class Curry extends CurryImplement {
         // (<*>) :: f (a -> b) -> f a -> f b
         // (<*>) :: (a -> (a0 -> b)) -> (a -> a0) -> a -> b
         // (<*>) f g = \x -> f( x (g x))
-        return Curry.ap(this.currying, g);
+        return Curry.ap(this, g);
     }
 }
 

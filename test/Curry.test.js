@@ -4,6 +4,24 @@ import List from '../src/data/List';
 const {assert, expect, should} = require('chai');
 
 describe('Curry', function () {
+    describe('is', function () {
+        it('Curry is not instanceof Function', function () {
+            let f = Curry.for(() => 1);
+            assert.equal(f instanceof Function, false);
+        });
+        it('Function prototype is not PrototypeOf Curry', function () {
+            let f = Curry.for(() => 1);
+            assert.equal(Function.prototype.isPrototypeOf(f), false);
+        });
+        it('Curry is instanceof Curry', function () {
+            let f = Curry.for(() => 1);
+            assert.equal(f instanceof Curry, true);
+        });
+        it('Curry prototype is  PrototypeOf Curry', function () {
+            let f = Curry.for(() => 1);
+            assert.equal(Curry.prototype.isPrototypeOf(f), true);
+        });
+    });
     describe('#constructor()', function () {
         it('should instanceof', function () {
             let func = (x, y, z, a, b) => x + y + z + a + b;
@@ -70,9 +88,13 @@ describe('Curry', function () {
         });
         it('(b -> c) -> ((a1 -> a2 -> b) -> a1) -> a2 -> c', function () {
             // f :: (b -> c)
-            let f = Curry.for(b => b + 100);
+            let f = Curry.for((b) => {
+                return b + 100;
+            });
             // g :: (a1 -> a2 -> b)
-            let g = Curry.for((x, y) => x + y + 20);
+            let g = Curry.for((x, y) => {
+                return x + y + 20;
+            });
 
             let g1 = g(0);
             let fg1 = f.mapH(g1);
@@ -136,7 +158,6 @@ describe('Curry', function () {
             let fa = List.from([1, 2, 3]);
             ab = Curry.for(ab);
             let result1 = ab.mapH(fa);
-            console.log(result1);
             expect(result1).to.deep.equal(List.of(101, 102, 103));
         });
     });

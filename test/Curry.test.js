@@ -1,4 +1,4 @@
-import Curry from "../src/data/Curry";
+import {Curry, options} from "../src/data/Curry";
 import List from '../src/data/List';
 
 const {assert, expect, should} = require('chai');
@@ -6,6 +6,7 @@ const {assert, expect, should} = require('chai');
 describe('Curry', function () {
     describe('is', function () {
         it('Curry is not instanceof Function', function () {
+            let c = Curry;
             let f = Curry.it(() => 1);
             assert.equal(f instanceof Function, false);
         });
@@ -138,6 +139,19 @@ describe('Curry', function () {
             let g1 = (x, y) => x / y;
             let result2 = ccc(f1, g1, 8, 2);
             assert.equal(result2, 2);
+        });
+        it('Curry.map.option', function () {
+            // f :: (b -> c)
+            let f = (x, extra1, extra2) => x + 100 + (extra1 || 0) + (extra2 || 0);
+            f = Curry.it(f, 1);
+            // g :: (a -> b)
+            let g = (x) => x + 20;
+            let c = Curry.map;
+            let fg = c(f, g)
+            let result1 = fg(3);
+            assert.equal(result1, 123);
+
+
         });
         it('List.map', function () {
             // f :: (b -> c)

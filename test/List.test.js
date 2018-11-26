@@ -1,4 +1,5 @@
 import List from '../src/data/List';
+
 const {assert, expect, should} = require('chai');
 
 describe('List', function () {
@@ -49,4 +50,5 @@ describe('List', function () {
             })).to.deep.equal(List.of());
         });
     });
+
 });

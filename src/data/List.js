@@ -4,6 +4,7 @@ import mix from "../mix";
 import ListMonoid from "./ListMonoid";
 import Monoid from "../type/Monoid";
 import Monad from "../type/Monad";
+import {options} from "./Curry";
 
 const ListInterface = mix('ListInterface', Foldable, Monoid, Monad);
 
@@ -20,30 +21,29 @@ class List extends ListImplement {
 
     constructor(...args) {
         super();
-        // create a new instance which we called subThing
-        let subThing = new Array(...args);
-        Object.setPrototypeOf(subThing, this);
-        // bind with subThing
+        // create a new instance which we called subThis
+        let subThis = new Array(...args);
+        Object.setPrototypeOf(subThis, this);
+        // bind with subThis
         // Monad
         let p = List.prototype;
-        this.map = p.map.bind(subThing);
-        this.ap = p.ap.bind(subThing);
-        this.chain = p.chain.bind(subThing);
+        this.map = p.map.bind(subThis);
+        this.ap = p.ap.bind(subThis);
+        this.chain = p.chain.bind(subThis);
         // Semigroup
-        this.concat = p.concat.bind(subThing);
+        this.concat = p.concat.bind(subThis);
         // Monoid
-        this.empty = p.empty.bind(subThing);
-        this.mconcat = p.mconcat.bind(subThing);
+        this.empty = p.empty.bind(subThis);
+        this.mconcat = p.mconcat.bind(subThis);
         // Foldable
-        this.reduce = p.reduce.bind(subThing);
-        this.reduceRight = p.reduceRight.bind(subThing);
-        // return subThing instance to replace this
-        return subThing;
+        this.reduce = p.reduce.bind(subThis);
+        this.reduceRight = p.reduceRight.bind(subThis);
+        // return subThis instance to replace this
+        return subThis;
     }
 
     map(ab) {
         // Functor f => f a ~>  (a -> b) -> f b
-        // 由於Array預設行為會丟入3個參數進去 ， 因此我們必須限制只能丟1個參數進去
         let ab1 = (currentValue, index, array) => ab(currentValue);
         return super.map(ab1);
     }

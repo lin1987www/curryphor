@@ -31,6 +31,10 @@ npm install --save-dev mocha chai mocha-loader
 // 使用使用指令執行測試
 npx mocha --require babel-core/register ./test/index.js
 
+babel 7.x
+npx mocha --require @babel/register ./test/index.js
+
+
 // https://github.com/mochajs/mocha/issues/2655
 // https://github.com/mochajs/mocha/wiki/compilers-deprecation
 // mocha 設定額外參數 --require babel-core/register  可以在畫面中正常執行 ES6 import
@@ -54,3 +58,11 @@ npm publish --access=public
 參考資料
 How to Create and Publish Your First Node.js Module
 https://codeburst.io/how-to-create-and-publish-your-first-node-js-module-444e7585b738
+
+
+npx babel-upgrade
+
+npm install -save-dev @babel/plugin-syntax-dynamic-import @babel/plugin-syntax-import-meta @babel/plugin-proposal-object-rest-spread @babel/plugin-proposal-class-properties @babel/plugin-proposal-json-strings @babel/plugin-proposal-export-default-from @babel/plugin-proposal-export-namespace-from
+
+移除未使用
+npm prune

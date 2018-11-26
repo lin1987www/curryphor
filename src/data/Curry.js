@@ -112,21 +112,86 @@ class Curry extends CurryImplement {
 
 Curry.CurryingBoundArg = Symbol("Curry.currying.BoundArg");
 
+class AppendOptionalArgs extends Array {
+    static options(...args) {
+        return new AppendOptionalArgs(...args);
+    }
+
+    constructor(...args) {
+        super(...args);
+        // Fix this extends Array didn't set Prototype to it
+        Object.setPrototypeOf(this, AppendOptionalArgs.prototype);
+    }
+
+}
+
+class CurryingArgs {
+    static create(arity, originArgs) {
+        return new CurryingArgs(arity, originArgs);
+    }
+
+    constructor(arity, originArgs) {
+        this.arity = arity;
+        this.originArgs = originArgs;
+        this.options = [];
+        this.theRest = [];
+        this.args = [];
+
+        for (let i = 0; i < originArgs.length; i++) {
+            let arg = originArgs[i];
+            if (i < arity) {
+                // not allow options
+                if (AppendOptionalArgs.prototype.isPrototypeOf(arg)) {
+                    throw new Error('Options only append to last argument.');
+                }
+                this.args.push(arg);
+            } else {
+                if (AppendOptionalArgs.prototype.isPrototypeOf(arg)) {
+                    // accept options
+                    this.options = arg.slice();
+                    this.theRest = originArgs.slice(i + 1);
+                } else {
+                    // the rest
+                    this.theRest = originArgs.slice(i);
+                }
+                break;
+            }
+        }
+    }
+
+    isNotEnough() {
+        return this.args.length < this.arity;
+    }
+
+    isJustEnough() {
+        return this.args.length == this.arity && !this.isMoreThenEnough();
+    }
+
+    isMoreThenEnough() {
+        return this.theRest.length > 0;
+    }
+
+    get argsWithOptions() {
+        return this.args.concat(this.options);
+    }
+}
 
 function currying(boundArg, ...args) {
     let fn = boundArg.fn;
     let arity = boundArg.arity;
-    if (args.length < arity) {
-        let f = curry(fn, arity, args);
+    let curryingArgs = CurryingArgs.create(arity, args);
+    if (curryingArgs.isNotEnough()) {
+        // args is not enough
+        let f = curry(fn, arity, curryingArgs.args);
         return f;
-    } else if (args.length == arity) {
-        let result = fn.apply(null, args);
+    } else if (curryingArgs.isJustEnough()) {
+        // args is enough
+        let result = fn.apply(null, curryingArgs.argsWithOptions);
         return result;
     } else {
-        let args1 = args.slice(0, arity);
-        let args2 = args.slice(arity);
-        let next = fn.apply(null, args1);
-        return next(...args2);
+        // args is enough, and has the rest
+        let next = fn.apply(null, curryingArgs.argsWithOptions);
+        return next(...curryingArgs.theRest);
     }
 };
 Object.setPrototypeOf(currying, Curry.prototype);
@@ -148,4 +213,7 @@ function curry(fn, arity, prependArgs) {
     return instance;
 }
 
-export default Curry;
+let options = AppendOptionalArgs.options;
+export {Curry};
+export {AppendOptionalArgs, options};
+

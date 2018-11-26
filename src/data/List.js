@@ -25,17 +25,18 @@ class List extends ListImplement {
         Object.setPrototypeOf(subThing, this);
         // bind with subThing
         // Monad
-        this.map = this.map.bind(subThing);
-        this.ap = this.ap.bind(subThing);
-        this.chain = this.chain.bind(subThing);
+        let p = List.prototype;
+        this.map = p.map.bind(subThing);
+        this.ap = p.ap.bind(subThing);
+        this.chain = p.chain.bind(subThing);
         // Semigroup
-        this.concat = this.concat.bind(subThing);
+        this.concat = p.concat.bind(subThing);
         // Monoid
-        this.empty = this.empty.bind(subThing);
-        this.mconcat = this.mconcat.bind(subThing);
+        this.empty = p.empty.bind(subThing);
+        this.mconcat = p.mconcat.bind(subThing);
         // Foldable
-        this.reduce = this.reduce.bind(subThing);
-        this.reduceRight = this.reduceRight.bind(subThing);
+        this.reduce = p.reduce.bind(subThing);
+        this.reduceRight = p.reduceRight.bind(subThing);
         // return subThing instance to replace this
         return subThing;
     }

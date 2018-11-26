@@ -7,6 +7,7 @@ const CurryInterface = mix('CurryInterface', Monad);
 const CurryImplement = mix('CurryImplement', CurryInterface, Function);
 
 class Curry extends CurryImplement {
+
     static it(fn, arity, prependArgs) {
         if (Curry.prototype.isPrototypeOf(fn)) {
             return fn;
@@ -109,54 +110,42 @@ class Curry extends CurryImplement {
     }
 }
 
-function curryingBind(fn, arity, prependArgs) {
-    function currying(...args) {
-        if (args.length < arity) {
-            let f = curry(fn, arity, args);
-            return f;
-        } else if (args.length == arity) {
-            let result = fn.call(null, ...args);
-            return result;
-        } else {
-            let args1 = args.slice(0, arity);
-            let args2 = args.slice(arity);
-            let next = fn.call(null, ...args1);
-            return next(...args2);
-        }
-    };
+Curry.CurryingBoundArg = Symbol("Curry.currying.BoundArg");
 
-    /*
-    let self = Object.create(Curry.prototype);
-    Object.setPrototypeOf(currying, self);
-    let instance = currying.bind(null, ...prependArgs);
-    // bind
-    let p = Curry.prototype;
-    self.map = p.map.bind(instance);
-    self.mapH = p.mapH.bind(instance);
-    self.ap = p.ap.bind(instance);
-    self.apH = p.apH.bind(instance);
-    */
 
-    Object.setPrototypeOf(currying, Curry.prototype);
-    let instance = currying.bind(null, ...prependArgs);
-
-    return instance;
-}
+function currying(boundArg, ...args) {
+    let fn = boundArg.fn;
+    let arity = boundArg.arity;
+    if (args.length < arity) {
+        let f = curry(fn, arity, args);
+        return f;
+    } else if (args.length == arity) {
+        let result = fn.apply(null, args);
+        return result;
+    } else {
+        let args1 = args.slice(0, arity);
+        let args2 = args.slice(arity);
+        let next = fn.apply(null, args1);
+        return next(...args2);
+    }
+};
+Object.setPrototypeOf(currying, Curry.prototype);
 
 function curry(fn, arity, prependArgs) {
-    let curryingInstance = curryingBind(fn, arity, prependArgs);
-    curryingInstance.currying = curryingInstance;
-    curryingInstance.fn = fn;
-    curryingInstance.arity = arity;
-    curryingInstance.args = prependArgs;
+    let boundArg = {};
+    let instance = currying.bind(null, boundArg, ...prependArgs);
+    instance[Curry.CurryingBoundArg] = boundArg;
+    boundArg.fn = fn;
+    boundArg.arity = arity;
+    boundArg.prependArgs = prependArgs;
     //
     let p = Curry.prototype;
-    curryingInstance.map = p.map.bind(curryingInstance);
-    curryingInstance.mapH = p.mapH.bind(curryingInstance);
-    curryingInstance.ap = p.ap.bind(curryingInstance);
-    curryingInstance.apH = p.apH.bind(curryingInstance);
+    instance.map = p.map.bind(instance);
+    instance.mapH = p.mapH.bind(instance);
+    instance.ap = p.ap.bind(instance);
+    instance.apH = p.apH.bind(instance);
     //
-    return curryingInstance;
+    return instance;
 }
 
 export default Curry;

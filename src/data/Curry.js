@@ -8,11 +8,11 @@ const CurryImplement = mix('CurryImplement', CurryInterface, Function);
 
 class Curry extends CurryImplement {
 
-    static it(fn, arity, prependArgs) {
+    static it(fn, arity, hasOptArgs, prependArgs) {
         if (Curry.prototype.isPrototypeOf(fn)) {
             return fn;
         }
-        return new Curry(fn, arity, prependArgs);
+        return new Curry(fn, arity, hasOptArgs, prependArgs);
     }
 
     static of(a) {
@@ -46,12 +46,13 @@ class Curry extends CurryImplement {
         return Curry.it(apFunctor);
     }
 
-    constructor(fn, arity, prependArgs) {
+    constructor(fn, arity, hasOptArgs, prependArgs) {
         super();
         arity = arity || fn.length;
+        hasOptArgs = hasOptArgs || fn.length > arity;
         prependArgs = prependArgs || [];
 
-        let curryInstance = curry(fn, arity, prependArgs);
+        let curryInstance = curry(fn, arity, hasOptArgs, prependArgs);
         return curryInstance;
     }
 
@@ -119,19 +120,17 @@ class AppendOptionalArgs extends Array {
 
     constructor(...args) {
         super(...args);
-        // Fix this extends Array didn't set Prototype to it
-        Object.setPrototypeOf(this, AppendOptionalArgs.prototype);
     }
-
 }
 
 class CurryingArgs {
-    static create(arity, originArgs) {
-        return new CurryingArgs(arity, originArgs);
+    static create(arity, hasOptArgs, originArgs) {
+        return new CurryingArgs(arity, hasOptArgs, originArgs);
     }
 
-    constructor(arity, originArgs) {
+    constructor(arity, hasOptArgs, originArgs) {
         this.arity = arity;
+        this.hasOptArgs = hasOptArgs;
         this.originArgs = originArgs;
         this.options = [];
         this.theRest = [];
@@ -176,13 +175,14 @@ class CurryingArgs {
     }
 }
 
-function currying(boundArg, ...args) {
-    let fn = boundArg.fn;
-    let arity = boundArg.arity;
-    let curryingArgs = CurryingArgs.create(arity, args);
+function currying(boundArgs, ...args) {
+    let fn = boundArgs.fn;
+    let arity = boundArgs.arity;
+    let hasOptArgs = boundArgs.hasOptArgs;
+    let curryingArgs = CurryingArgs.create(arity, hasOptArgs, args);
     if (curryingArgs.isNotEnough()) {
         // args is not enough
-        let f = curry(fn, arity, curryingArgs.args);
+        let f = curry(fn, arity, hasOptArgs, curryingArgs.args);
         return f;
     } else if (curryingArgs.isJustEnough()) {
         // args is enough
@@ -196,13 +196,14 @@ function currying(boundArg, ...args) {
 };
 Object.setPrototypeOf(currying, Curry.prototype);
 
-function curry(fn, arity, prependArgs) {
-    let boundArg = {};
-    let instance = currying.bind(null, boundArg, ...prependArgs);
-    instance[Curry.CurryingBoundArg] = boundArg;
-    boundArg.fn = fn;
-    boundArg.arity = arity;
-    boundArg.prependArgs = prependArgs;
+function curry(fn, arity, hasOptArgs, prependArgs) {
+    let boundArgs = {};
+    let instance = currying.bind(null, boundArgs, ...prependArgs);
+    instance[Curry.CurryingBoundArg] = boundArgs;
+    boundArgs.fn = fn;
+    boundArgs.arity = arity;
+    boundArgs.hasOptArgs = hasOptArgs;
+    boundArgs.prependArgs = prependArgs;
     //
     let p = Curry.prototype;
     instance.map = p.map.bind(instance);
@@ -214,6 +215,5 @@ function curry(fn, arity, prependArgs) {
 }
 
 let options = AppendOptionalArgs.options;
-export {Curry};
-export {AppendOptionalArgs, options};
+export {Curry, AppendOptionalArgs, options};
 

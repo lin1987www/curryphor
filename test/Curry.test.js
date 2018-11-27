@@ -36,7 +36,7 @@ describe('Curry', function () {
             let result = f4(5);
             assert.equal(result, 15);
             let f5 = f1(10, 10, 10);
-            expect(f5[Curry.CurryingBoundArg].prependArgs).to.deep.equal([1, 10, 10, 10]);
+            expect(f5.bound.prependArgs).to.deep.equal([1, 10, 10, 10]);
             let result2 = f5(10);
             assert.equal(result2, 41);
         });
@@ -47,21 +47,21 @@ describe('Curry', function () {
             let f = Curry.it(func);
             let f1 = f.apply('', [1]);
             assert.equal(f1.apply('666', [2]), 3);
-            assert.equal(f1[Curry.CurryingBoundArg].fn, func);
+            assert.equal(f1.bound.fn, func);
         });
         it('#call()', function () {
             let func = (x, y) => x + y;
             let f = Curry.it(func);
             let f1 = f.call(null, 1);
             assert.equal(f1.call('', 2), 3);
-            assert.equal(f1[Curry.CurryingBoundArg].fn, func);
+            assert.equal(f1.bound.fn, func);
         });
         it('#bind()', function () {
             let func = (x, y) => x + y;
             let f = Curry.it(func);
             let f1 = f.bind('', 1)();
             assert.equal(f1.bind(null, 2)(), 3);
-            assert.equal(f1[Curry.CurryingBoundArg].fn, func);
+            assert.equal(f1.bound.fn, func);
         });
         it('#curry()', function () {
             let func = (x, y) => x + y;

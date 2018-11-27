@@ -49,7 +49,7 @@ class Curry extends CurryImplement {
     constructor(fn, arity, hasOptArgs, prependArgs) {
         super();
         arity = arity || fn.length;
-        hasOptArgs = hasOptArgs || fn.length > arity;
+        hasOptArgs = hasOptArgs || true;
         prependArgs = prependArgs || [];
 
         let curryInstance = curry(fn, arity, hasOptArgs, prependArgs);
@@ -111,7 +111,7 @@ class Curry extends CurryImplement {
     }
 }
 
-Curry.CurryingBoundArg = Symbol("Curry.currying.BoundArg");
+Curry.Bound = Symbol("Curry.Bound");
 
 class AppendOptionalArgs extends Array {
     static options(...args) {
@@ -123,87 +123,50 @@ class AppendOptionalArgs extends Array {
     }
 }
 
-class CurryingArgs {
-    static create(arity, hasOptArgs, originArgs) {
-        return new CurryingArgs(arity, hasOptArgs, originArgs);
-    }
-
-    constructor(arity, hasOptArgs, originArgs) {
-        this.arity = arity;
-        this.hasOptArgs = hasOptArgs;
-        this.originArgs = originArgs;
-        this.options = [];
-        this.theRest = [];
-        this.args = [];
-
-        for (let i = 0; i < originArgs.length; i++) {
-            let arg = originArgs[i];
-            if (i < arity) {
-                // not allow options
-                if (AppendOptionalArgs.prototype.isPrototypeOf(arg)) {
-                    throw new Error('Options only append to last argument.');
-                }
-                this.args.push(arg);
-            } else {
-                if (AppendOptionalArgs.prototype.isPrototypeOf(arg)) {
-                    // accept options
-                    this.options = arg.slice();
-                    this.theRest = originArgs.slice(i + 1);
-                } else {
-                    // the rest
-                    this.theRest = originArgs.slice(i);
-                }
-                break;
-            }
-        }
-    }
-
-    isNotEnough() {
-        return this.args.length < this.arity;
-    }
-
-    isJustEnough() {
-        return this.args.length == this.arity && !this.isMoreThenEnough();
-    }
-
-    isMoreThenEnough() {
-        return this.theRest.length > 0;
-    }
-
-    get argsWithOptions() {
-        return this.args.concat(this.options);
-    }
-}
-
 function currying(boundArgs, ...args) {
     let fn = boundArgs.fn;
     let arity = boundArgs.arity;
     let hasOptArgs = boundArgs.hasOptArgs;
-    let curryingArgs = CurryingArgs.create(arity, hasOptArgs, args);
-    if (curryingArgs.isNotEnough()) {
+    if (args.length < arity) {
         // args is not enough
-        let f = curry(fn, arity, hasOptArgs, curryingArgs.args);
+        let f = curry(fn, arity, hasOptArgs, args);
         return f;
-    } else if (curryingArgs.isJustEnough()) {
-        // args is enough
-        let result = fn.apply(null, curryingArgs.argsWithOptions);
-        return result;
     } else {
-        // args is enough, and has the rest
-        let next = fn.apply(null, curryingArgs.argsWithOptions);
-        return next(...curryingArgs.theRest);
+        for (let i = 0; i < arity; i++) {
+            let arg = args[i];
+            if (AppendOptionalArgs.prototype.isPrototypeOf(arg)) {
+                throw new Error('Only allow to append options at last');
+            }
+        }
+        let theRestStartIndex = arity;
+        let applyArgs = args.slice(0, arity);
+        if (AppendOptionalArgs.prototype.isPrototypeOf(args[arity])) {
+            theRestStartIndex++;
+            if (hasOptArgs) {
+                applyArgs = applyArgs.concat(args[arity]);
+            }
+        }
+        let theRest = args.slice(theRestStartIndex);
+        let result = fn.apply(null, applyArgs);
+        if (theRest.length == 0) {
+            // args is just enough
+            return result;
+        } else {
+            // args is more than enough
+            return result(...theRest);
+        }
     }
 };
 Object.setPrototypeOf(currying, Curry.prototype);
 
 function curry(fn, arity, hasOptArgs, prependArgs) {
-    let boundArgs = {};
-    let instance = currying.bind(null, boundArgs, ...prependArgs);
-    instance[Curry.CurryingBoundArg] = boundArgs;
-    boundArgs.fn = fn;
-    boundArgs.arity = arity;
-    boundArgs.hasOptArgs = hasOptArgs;
-    boundArgs.prependArgs = prependArgs;
+    let bound = {};
+    let instance = currying.bind(null, bound, ...prependArgs);
+    instance['bound'] = bound;
+    bound.fn = fn;
+    bound.arity = arity;
+    bound.hasOptArgs = hasOptArgs;
+    bound.prependArgs = prependArgs;
     //
     let p = Curry.prototype;
     instance.map = p.map.bind(instance);
@@ -215,5 +178,5 @@ function curry(fn, arity, hasOptArgs, prependArgs) {
 }
 
 let options = AppendOptionalArgs.options;
-export {Curry, AppendOptionalArgs, options};
+export {Curry, options};
 

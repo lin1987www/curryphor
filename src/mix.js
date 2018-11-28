@@ -9,7 +9,7 @@ const MIX = {
 };
 
 // 之後修改成可以指定 F (constructor 跟 prototype 都是客製化的)  用於之後 curry 後的 Function 結構
-const mix = (name, ...fns) => {
+const mix = (name, fns, extendsClass) => {
     let constructorArrayArray = fns.reduce((accumulator, currentValue) => {
         function recordAllConstructors(constructorArrayArray, constructor, index) {
             if (constructor != MIX.fPrototype) {
@@ -81,7 +81,7 @@ const mix = (name, ...fns) => {
         Object.defineProperties(target, objectProperties);
     }
 
-    constructorArrayArray.reduce((newClass, constructorArray, index, array) => {
+    let lastClass = constructorArrayArray.reduce((newClass, constructorArray, index, array) => {
         //  merging constructorArray to created new class.
         let prototypeArray = constructorArray.map(constructor => constructor.prototype);
 
@@ -103,6 +103,11 @@ const mix = (name, ...fns) => {
             return newClass;
         }
     }, F);
+
+    if (extendsClass) {
+        Object.setPrototypeOf(lastClass, extendsClass);
+        Object.setPrototypeOf(lastClass.prototype, extendsClass.prototype);
+    }
 
     Object.defineProperty(F, "name", {value: name});
 

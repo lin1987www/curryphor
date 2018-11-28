@@ -18,7 +18,7 @@ module.exports = {
     entry: {
         'lib.min': ['react', 'react-dom'],
         'app': ['./src/index.js'],
-        'test': ['./test/index.js'],
+        'test': ["@babel/polyfill", './test/index.js'],
     },
     output: {
         // filename: 'main.js',
@@ -78,6 +78,24 @@ module.exports = {
                     // Explicitly disable babelrc so we don't catch various config
                     // in much lower dependencies.
                     babelrc: false,
+                    presets: [
+                        [
+                            '@babel/env',
+                            {
+                                targets: {
+                                    browsers: [
+                                        'last 3 versions',
+                                        'Safari >= 8',
+                                        'iOS >= 8',
+                                        'ie >= 8'
+                                    ]
+                                },
+                                "debug": true,
+                                "useBuiltIns": "entry", // 使用 babel 的 polyfill
+                            }
+                        ],
+                        '@babel/react'
+                    ],
                     plugins: [
                         /*
                         'syntax-dynamic-import',
@@ -91,17 +109,6 @@ module.exports = {
                         "@babel/plugin-proposal-export-default-from",
                         "@babel/plugin-proposal-export-namespace-from",
                     ],
-                    presets: [
-                        [
-                            '@babel/env',
-                            {
-                                targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8', 'ie >= 8']},
-                                "debug": true,
-                                "useBuiltIns": "entry", // 使用 babel 的 polyfill
-                            }
-                        ],
-                        '@babel/react'
-                    ]
                 }
             },
             {

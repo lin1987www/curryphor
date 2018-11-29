@@ -172,58 +172,36 @@ describe('Curry', function () {
         });
     });
     describe('#ap', function () {
-        it('Curry.ap', function () {
+        it('(<**>) :: f a -> f (a -> b) -> f b', function () {
             let f = (x, y) => x / y;
             let g = (x) => x + 90;
-            let fxgx = Curry.ap(f, g);
+            g = Curry.it(g);
+            let gxfx = g.ap(f);
             let x = 10;
-            let result = fxgx(x);
-            assert.equal(result, 10 / (10 + 90));
-            result = Curry.it(f).apH(g)(x);
+            let result = gxfx(x);
             assert.equal(result, 10 / (10 + 90));
         });
     });
-    describe('#error', function () {
-        it('#bind', function () {
-            class A extends Function {
-                callByThis1(caller) {
-                    assert.equal(this === caller, true);
-                    caller.callByThis2(caller, this);
-                }
-
-                callByThis2(caller, self) {
-                    assert.equal(this === caller, true);
-                    assert.equal(this === self, true);
-                }
-            }
-
-            let fPrototypeOfA = Object.create(A.prototype);
-            fPrototypeOfA.tag = "f.[[prototype]]";
-
-            function f(x) {
-                return x;
-            }
-
-            assert.equal(Function.prototype.isPrototypeOf(f), true);
-            Object.setPrototypeOf(f, Object.prototype);
-            assert.equal(Function.prototype.isPrototypeOf(f), false);
-            Object.setPrototypeOf(f, fPrototypeOfA);
-            assert.equal(Function.prototype.isPrototypeOf(f), true);
-            //
-            assert.equal(f.tag === fPrototypeOfA.tag, true);
-            let f1 = f.bind(null);
-            assert.equal(f1.tag === fPrototypeOfA.tag, true);
-            fPrototypeOfA.tag = "f.[[prototype]] change 1";
-            assert.equal(Object.getPrototypeOf(f1) === Object.getPrototypeOf(f), true);
-            assert.equal(f1 === f, false);
-            //
-            f1.callByThis1(f1);
-            //
-            let fx = {};
-            let f2 = f.bind(null, fx);
-            assert.equal(f2() === fx, true);
-            fx.tag = "fx";
-            assert.equal(f2().tag === "fx", true);
+    describe('#apH', function () {
+        it('(<*>) :: f (a -> b) -> f a -> f b', function () {
+            let f = (x, y) => x / y;
+            let g = (x) => x + 90;
+            f = Curry.it(f);
+            let fxgx = f.apH(g);
+            let x = 10;
+            let result = fxgx(x);
+            assert.equal(result, 10 / (10 + 90));
+        });
+    });
+    describe('#chain', function () {
+        it('(>>=) :: (r -> a) -> (a -> (r -> b)) -> r -> b', function () {
+            let f = (x, y) => x / y;
+            let g = (x) => x + 90;
+            g = Curry.it(g);
+            let gxfx = g.chain(f);
+            let x = 10;
+            let result = gxfx(x);
+            assert.equal(result, (10 + 90) / 10);
         });
     });
 });

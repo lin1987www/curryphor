@@ -53,7 +53,7 @@ class Curry extends CurryImplement {
             let b = amb(a, r);
             return b;
         };
-        let rb1 = curry.it(rb);
+        let rb1 = Curry.it(rb);
         return rb1;
     }
 
@@ -107,7 +107,7 @@ class Curry extends CurryImplement {
         // ap f g = \x -> g( x (f x))
         //
         // Haskell
-        // (<**>) :: f => f a -> f (a -> b) -> f b
+        // (<**>) :: f a -> f (a -> b) -> f b
         // (<**>) :: (a -> a0) -> (a -> (a0 -> b)) -> a -> b
         // (<**>) f g = \x -> g( x (f x))
         return Curry.ap(f, this);
@@ -122,7 +122,7 @@ class Curry extends CurryImplement {
     }
 
     chain(amb) {
-        return Curry.ap(this, amb);
+        return Curry.chain(this, amb);
     }
 }
 

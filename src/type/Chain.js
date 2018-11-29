@@ -27,6 +27,7 @@ class Chain extends Apply {
     }
 
     fail(e) {
+        throw e;
         console.log('Chain.[[Prototype]].fail');
     }
 }

@@ -56,4 +56,12 @@ describe('List', function () {
             })).to.deep.equal(List.of());
         });
     });
+    describe('#reduce()', function () {
+        it('should equal', function () {
+            expect(list.reduce((a, x) => {
+                a.push(x * 2);
+                return a
+            }, [])).to.deep.equal(List.of(2, 4, 6));
+        });
+    });
 });

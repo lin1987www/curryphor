@@ -7,54 +7,17 @@ const CurryInterface = mix('CurryInterface', [Monad]);
 const CurryImplement = mix('CurryImplement', [CurryInterface, Function], Function);
 
 class Curry extends CurryImplement {
+    static map(bc, ab) {
+        // Haskell (<$>) :: Functor f => (a -> b) -> f a -> f b
+        // map :: (b -> c) -> (a -> b) -> a -> c
+        // compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k
+        return Curry.it(ab).map(bc);
+    }
 
     static of(a) {
         let _a = _ => a;
         let f_a = Curry.it(_a);
         return f_a;
-    }
-
-    static map(bc, ab) {
-        // Haskell (<$>) :: Functor f => (a -> b) -> f a -> f b
-        // map :: (b -> c) -> (a -> b) -> a -> c
-        // compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k
-        bc = Curry.it(bc);
-        ab = Curry.it(ab);
-        let c = function (a) {
-            let b = ab(a);
-            let c = bc(b);
-            return c;
-        }
-        let c1 = Curry.it(c);
-        return c1;
-    }
-
-    static ap(aa0b, aa0) {
-        // Haskell
-        // (<*>) :: f (a -> b) -> f a -> f b
-        // (<*>) :: (a -> (a0 -> b)) -> (a -> a0) -> a -> b
-        // (<*>) f g x = f( x (g x))
-        aa0b = Curry.it(aa0b);
-        aa0 = Curry.it(aa0);
-        let b = (a) => {
-            return aa0b(a, aa0(a));
-        };
-        let b1 = Curry.it(b);
-        return b1;
-    }
-
-    static chain(ma, amb) {
-        // (>>=) :: m a -> (a -> m b) -> m b
-        // (>>=) :: (r -> a) -> (a -> (r -> b)) -> r -> b
-        ma = Curry.it(ma);
-        amb = Curry.it(amb);
-        let rb = (r) => {
-            let a = ma(r);
-            let b = amb(a, r);
-            return b;
-        };
-        let rb1 = Curry.it(rb);
-        return rb1;
     }
 
     static it(fn, arity, prependArgs) {
@@ -72,35 +35,40 @@ class Curry extends CurryImplement {
     }
 
     map(bc) {
-        // Haskell (<$>) :: Functor f => (a -> b) -> f a -> f b
         // Fantasy Land
         // map :: Functor f => (a -⁠> b, f a) -⁠> f b
         // map :: Functor f => f a ~> (a -> b) -> f b
         // map :: (a -> b) -> (b -> c) -> a -> c
-        return Curry.map(bc, this);
+        //
+        // Haskell (<&>) :: Functor f => f a -> (a -> b) -> f b
+        bc = Curry.it(bc);
+        let ab = this;
+        let c = function (a) {
+            let b = ab(a);
+            let c = bc(b);
+            return c;
+        }
+        let c1 = Curry.it(c);
+        return c1;
     }
 
-    mapH(ab) {
-        // Haskell (<&>) :: Functor f => f a -> (a -> b) -> f b
-        // compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k
-        // fmap :: (a -> b) -> f a -> f b
+    fmap(fa) {
+        // Haskell
+        // (<$>) :: Functor f => (a -> b) -> f a -> f b
+        // fmap  :: Functor f => (a -> b) -> f a -> f b
+        //
+        // compose - fmap (a -> b) ((->) r a)
         // (.) :: (b -> c) -> (a -> b) -> a -> c
         // (.) f g = \x -> f (g x)
-        if (Function.prototype.isPrototypeOf(ab) && !Curry.prototype.isPrototypeOf(ab)) {
-            ab = Curry.it(ab);
-        } else if (Array.prototype.isPrototypeOf(ab) && !List.prototype.isPrototypeOf(ab)) {
-            ab = List.from(ab);
+        if (Function.prototype.isPrototypeOf(fa) && !Curry.prototype.isPrototypeOf(fa)) {
+            fa = Curry.it(fa);
+        } else if (Array.prototype.isPrototypeOf(fa) && !List.prototype.isPrototypeOf(fa)) {
+            fa = List.from(fa);
         }
-        /*
-        if (Curry.prototype.isPrototypeOf(ab)) {
-            // Avoid call ab.map(this) error.
-            return Curry.map(this, ab);
-        }
-        */
-        return ab.map(this);
+        return fa.map(this);
     }
 
-    ap(f) {
+    ap(aa0b) {
         // Fantasy Land
         // ap :: Apply f => (f (a -⁠> b), f a) -⁠> f b
         // ap :: Apply f => f a ~> f (a -> b) -> f b
@@ -110,19 +78,42 @@ class Curry extends CurryImplement {
         // (<**>) :: f a -> f (a -> b) -> f b
         // (<**>) :: (a -> a0) -> (a -> (a0 -> b)) -> a -> b
         // (<**>) f g = \x -> g( x (f x))
-        return Curry.ap(f, this);
+        aa0b = Curry.it(aa0b);
+        let aa0 = this;
+        let b = (a) => {
+            return aa0b(a, aa0(a));
+        };
+        let b1 = Curry.it(b);
+        return b1;
     }
 
-    apH(g) {
+    apH(fa) {
         // Haskell
         // (<*>) :: f (a -> b) -> f a -> f b
-        // (<*>) :: (a -> (a0 -> b)) -> (a -> a0) -> a -> b
-        // (<*>) f g = \x -> f( x (g x))
-        return Curry.ap(this, g);
+        //
+        // instance Applicative (->) r
+        //     (<*>) :: (a -> (a0 -> b)) -> (a -> a0) -> a -> b
+        //     (<*>) f g = \x -> f( x (g x))
+        if (Function.prototype.isPrototypeOf(fa) && !Curry.prototype.isPrototypeOf(fa)) {
+            fa = Curry.it(fa);
+        } else if (Array.prototype.isPrototypeOf(fa) && !List.prototype.isPrototypeOf(fa)) {
+            fa = List.from(fa);
+        }
+        return fa.ap(this);
     }
 
     chain(amb) {
-        return Curry.chain(this, amb);
+        // (>>=) :: m a -> (a -> m b) -> m b
+        // (>>=) :: (r -> a) -> (a -> (r -> b)) -> r -> b
+        let ma = this;
+        amb = Curry.it(amb);
+        let rb = (r) => {
+            let a = ma(r);
+            let b = amb(a, r);
+            return b;
+        };
+        let rb1 = Curry.it(rb);
+        return rb1;
     }
 }
 
@@ -160,9 +151,10 @@ function curry(fn, arity, prependArgs) {
     //
     let p = Curry.prototype;
     instance.map = p.map.bind(instance);
-    instance.mapH = p.mapH.bind(instance);
+    instance.fmap = p.fmap.bind(instance);
     instance.ap = p.ap.bind(instance);
     instance.apH = p.apH.bind(instance);
+    instance.chain = p.chain.bind(instance);
     //
     return instance;
 }

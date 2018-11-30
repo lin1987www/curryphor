@@ -91,7 +91,7 @@ describe('Curry', function () {
             assert.equal(result, 6);
         });
     });
-    describe('#mapH', function () {
+    describe('#fmap', function () {
         // Haskell (<$>) :: Functor f => (a -> b) -> f a -> f b
         it('(b -> c) -> (a -> b) -> a -> c', function () {
             // f :: (b -> c)
@@ -99,7 +99,7 @@ describe('Curry', function () {
             // g :: (a -> b)
             let ab = (x) => x + 20;
             // f 。 g  :: (b -> c) -> (a -> b)
-            let bcab = bc.mapH(ab);
+            let bcab = bc.fmap(ab);
             let c = bcab(3);
             assert.equal(c, 123);
         });
@@ -114,15 +114,15 @@ describe('Curry', function () {
             });
             // :: (a2 -> b)
             let a2b = a1a2b(0);
-            let bc_mapH = bc.mapH;
+            let bc_fmap = bc.fmap;
             // :: (b -> c) -> (a2 -> b)
-            let bca2b = bc_mapH(a2b);
+            let bca2b = bc_fmap(a2b);
             // :: c
             let c = bca2b(3);
             assert.equal(c, 123);
 
             let a2b_ = a1a2b(4000);
-            let bca2b_ = bc.mapH(a2b_);
+            let bca2b_ = bc.fmap(a2b_);
             let c_ = bca2b_(3);
             assert.equal(c_, 4123);
         });
@@ -132,7 +132,7 @@ describe('Curry', function () {
             // g :: (a -> b)
             let g = (x) => x + 20;
             // fg :: ( b -> c -> d) -> (a -> b)
-            let fg = f.mapH(g);
+            let fg = f.fmap(g);
             // fg1 :: (c -> d)
             let fg1 = fg(3);
             // result1 :: d
@@ -152,7 +152,7 @@ describe('Curry', function () {
             // g :: (a -> b1 -> b2) , is equivalent because currying.
             let g = (x, y) => x + y + 20;
             // fg :: ((b1 -> b2) -> c) -> (a -> ( b1 -> b2 ))
-            let fg = f.mapH(g);
+            let fg = f.fmap(g);
             // result :: c
             let result = fg(3);
             assert.equal(result, 123);

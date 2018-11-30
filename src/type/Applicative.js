@@ -2,16 +2,12 @@ import Apply from './Apply'
 
 class Applicative extends Apply {
     static of(...a) {
-        console.log('Applicative.of ' + this.name);
+        console.log('Applicative.of');
     }
 
     // Applicative pure
     constructor() {
         super();
-    }
-
-    of(a) {
-        console.log('Applicative.[[Prototype]].of ' + this.name);
     }
 }
 

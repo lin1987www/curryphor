@@ -1,16 +1,20 @@
-import Foldable from "../type/Foldable";
-import ListMonad from "./ListMonad";
 import mix from "../mix";
-import ListMonoid from "./ListMonoid";
+import {Curry} from "./Curry";
+import Foldable from "../type/Foldable";
 import Monoid from "../type/Monoid";
 import Monad from "../type/Monad";
-import {Curry} from "./Curry";
+import Traversable from "../type/Traversable";
 
-const ListInterface = mix('ListInterface', [Foldable, Monoid, Monad]);
+const ListInterface = mix('ListInterface', [Foldable, Monoid, Monad, Traversable]);
 
-const ListImplement = mix('ListImplement', [ListInterface, ListMonoid, ListMonad, Array], Array);
+const ListImplement = mix('ListImplement', [ListInterface, Array], Array);
 
 class List extends ListImplement {
+    // Instance.method -> Prototype.method -> Constructor.method
+
+    static empty() {
+        return this.of();
+    }
 
     static of(...args) {
         return createList(Array.of(...args));
@@ -36,6 +40,42 @@ class List extends ListImplement {
         return super.map(ab1);
     }
 
+    ap(fab) {
+        // 跟 Haskell 定義相反，但是結果一致! 由 fab fa 的巢狀結構
+        // Apply f => f a ~> f (a -⁠> b) -⁠> f b
+        return fab.reduce((fb, ab) => {
+            return fb.concat(
+                this.reduce((fb, a) => {
+                    fb.push(ab(a));
+                    return fb;
+                }, List.of())
+            );
+        }, List.of());
+    }
+
+    cchain(amb) {
+        // built-in flatMap only accept one function, but chain can accept a array of functions
+        // Chain m => m a ~> (a -> m b) -> m b
+        return this.reduce((mb, a) => {
+            return mb.concat(amb(a));
+        }, List.of());
+    }
+
+    fail(e) {
+        return List.of();
+    }
+
+    concat(a) {
+        // mappend :: Semigroup => a -> a -> a
+        return super.concat(a);
+    }
+
+    mconcat() {
+        // mconcat :: Monoid a => [a] -> a
+        // mconcat :: [[a]] -> [a]
+        return this.flat(1);
+    }
+
     reduce(aba, a) {
         // Foldable f => f b ~> (a -> b -> a) -> a -> a
         let aba1 = aba;
@@ -57,25 +97,23 @@ class List extends ListImplement {
         }
         return super.reduceRight(aba1, a);
     }
-
-    empty() {
-        return this.of();
-    }
 }
 
 function createList(array, instance) {
     instance = instance || Object.create(List.prototype);
     Object.setPrototypeOf(array, instance);
     // bind with subThis
-    // Monad
+
     let p = List.prototype;
+    // Monad
     instance.map = p.map.bind(array);
     instance.ap = p.ap.bind(array);
     instance.chain = p.chain.bind(array);
+    instance.cchain = p.cchain.bind(array);
     // Semigroup
     instance.concat = p.concat.bind(array);
+    instance.mappend = p.mappend.bind(array);
     // Monoid
-    instance.empty = p.empty.bind(array);
     instance.mconcat = p.mconcat.bind(array);
     // Foldable
     instance.reduce = p.reduce.bind(array);

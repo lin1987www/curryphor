@@ -97,6 +97,27 @@ class List extends ListImplement {
         }
         return super.reduceRight(aba1, a);
     }
+
+    traverse(afb) {
+        // traverse :: (Applicative f, Traversable t) => t a ~> (a -> f b) -> f (t b)
+        // instance Traversable [] where
+        //     traverse f xs = foldr (\x v -> (:) <$> f x <*> v) (pure []) xs
+        let result = this.reduceRight((v, x) => {
+            // fb :: [a]
+            let fb = afb(x);
+            fb = List.from(fb);
+            // concat2 :: [a] -> [a] -> [a]
+            let concat2 = (a1, a2) => {
+                return [a1].concat(a2);
+            };
+            concat2 = Curry.it(concat2);
+            // fb_concat :: [[a] -> [a]]
+            let fb_concat = fb.map(concat2);
+            let result = v.ap(fb_concat);
+            return result;
+        }, List.of([]));
+        return result;
+    }
 }
 
 function createList(array, instance) {
@@ -118,6 +139,8 @@ function createList(array, instance) {
     // Foldable
     instance.reduce = p.reduce.bind(array);
     instance.reduceRight = p.reduceRight.bind(array);
+    // Traversable
+    instance.traverse = p.traverse.bind(array);
     // return subThis instance to replace this
     return array;
 }

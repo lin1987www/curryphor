@@ -64,4 +64,18 @@ describe('List', function () {
             }, [])).to.deep.equal(List.of(2, 4, 6));
         });
     });
+    describe('#reduceRight()', function () {
+        it('should equal', function () {
+            expect(list.reduceRight((a, x) => {
+                a.push(x * 2);
+                return a
+            }, [])).to.deep.equal(List.of(6, 4, 2));
+        });
+    });
+    describe('#traverse()', function () {
+        it('should equal', function () {
+            let list = List.of([1, 2, 3], [4, 5]);
+            expect(list.traverse(x => x)).to.deep.equal(List.of([1, 4], [1, 5], [2, 4], [2, 5], [3, 4], [3, 5]));
+        });
+    });
 });

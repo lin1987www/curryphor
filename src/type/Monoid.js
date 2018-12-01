@@ -1,4 +1,4 @@
-import Semigroup from "./Semigroup";
+import {Semigroup} from "./Semigroup";
 
 class Monoid extends Semigroup {
 
@@ -23,4 +23,4 @@ class Monoid extends Semigroup {
     }
 }
 
-export default Monoid;
+export {Monoid};

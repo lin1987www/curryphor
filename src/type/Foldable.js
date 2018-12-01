@@ -12,4 +12,4 @@ class Foldable {
     }
 }
 
-export default Foldable;
+export {Foldable};

@@ -1,6 +1,6 @@
-import mix from '../mix';
-import Monad from '../type/Monad';
-import List from "./List";
+import {mix} from '../mix';
+import {Monad} from '../type/Monad';
+import {List} from "./List";
 
 const CurryInterface = mix('CurryInterface', [Monad]);
 

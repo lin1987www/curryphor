@@ -1,6 +1,6 @@
 let presets = [
     [
-        '@babel/env',
+        '@babel/preset-env',
         {
             targets: {
                 browsers: [
@@ -10,18 +10,14 @@ let presets = [
                     'ie >= 8'
                 ]
             },
-            "debug": true,
-            "useBuiltIns": "entry", // 使用 babel 的 polyfill
+            debug: true,
+            useBuiltIns: "entry", // 使用 babel 的 polyfill
         }
     ],
     '@babel/react'
 ];
 
 let plugins = [
-    /*
-    'syntax-dynamic-import',
-    'transform-object-rest-spread',
-    */
     "@babel/plugin-syntax-dynamic-import",
     "@babel/plugin-proposal-object-rest-spread",
     "@babel/plugin-syntax-import-meta",

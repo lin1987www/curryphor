@@ -1,4 +1,4 @@
-import Apply from "./Apply";
+import {Apply} from "./Apply";
 
 class Chain extends Apply {
     static chain(ma, amb) {
@@ -31,4 +31,4 @@ class Chain extends Apply {
     }
 }
 
-export default Chain;
+export {Chain};

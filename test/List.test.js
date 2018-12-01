@@ -1,4 +1,4 @@
-import List from '../src/data/List';
+import {List} from '../src/data/List';
 
 const {assert, expect, should} = require('chai');
 

@@ -14,4 +14,4 @@ class Functor {
     }
 }
 
-export default Functor;
+export {Functor};

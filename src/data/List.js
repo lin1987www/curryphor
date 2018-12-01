@@ -1,9 +1,9 @@
-import mix from "../mix";
+import {mix} from "../mix";
 import {Curry} from "./Curry";
-import Foldable from "../type/Foldable";
-import Monoid from "../type/Monoid";
-import Monad from "../type/Monad";
-import Traversable from "../type/Traversable";
+import {Foldable} from "../type/Foldable";
+import {Monoid} from "../type/Monoid";
+import {Monad} from "../type/Monad";
+import {Traversable} from "../type/Traversable";
 
 const ListInterface = mix('ListInterface', [Foldable, Monoid, Monad, Traversable]);
 
@@ -145,4 +145,4 @@ function createList(array, instance) {
     return array;
 }
 
-export default List;
+export {List};

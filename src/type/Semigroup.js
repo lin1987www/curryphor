@@ -23,4 +23,4 @@ class Semigroup {
     }
 }
 
-export default Semigroup;
+export {Semigroup};

@@ -1,4 +1,4 @@
-import Functor from './Functor'
+import {Functor} from './Functor'
 
 class Apply extends Functor {
     static ap(fab, fa) {
@@ -20,4 +20,4 @@ class Apply extends Functor {
     }
 }
 
-export default Apply;
+export {Apply};

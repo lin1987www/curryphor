@@ -114,5 +114,5 @@ const mix = (name, fns, extendsClass) => {
     return F;
 }
 
-export {mix as default, MIX};
+export {mix, MIX};
 

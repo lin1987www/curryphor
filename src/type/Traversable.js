@@ -1,6 +1,6 @@
-import mix from '../mix';
-import Foldable from "./Foldable";
-import Applicative from "./Applicative";
+import {mix} from '../mix';
+import {Foldable} from "./Foldable";
+import {Applicative} from "./Applicative";
 
 const TraversableInterface = mix('TraversableInterface', [Applicative, Foldable]);
 
@@ -31,4 +31,4 @@ class Traversable extends TraversableInterface {
     }
 }
 
-export default Traversable;
+export {Traversable};

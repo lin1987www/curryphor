@@ -22,12 +22,12 @@ class Traversable extends TraversableInterface {
         // sequenceA = traverse id
 
         // http://hackage.haskell.org/package/base-4.12.0.0/docs/Data-Traversable.html#v:traverse
-        /*
-        instance Traversable [] where
-            traverse _ []     = pure []
-            traverse f (x:xs) = (:) <$> f x <*> traverse f xs
-        */
+        // https://zh.wikibooks.org/zh-tw/Haskell/Traversable%E7%B1%BB%E5%9E%8B%E7%B1%BB
+    }
 
+    sequenceA() {
+        // sequenceA :: Applicative f => t (f a) -> f (t a)
+        return this.traverse(x => x);
     }
 }
 

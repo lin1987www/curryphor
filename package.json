@@ -1,9 +1,8 @@
 {
   "name": "curryphor",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "description": "Curryphor\r =========",
   "private": false,
-  "main": "src/index.js",
   "scripts": {
     "test": "mocha --require @babel/register ./test/index.js",
     "watch": "webpack --watch",
@@ -13,7 +12,7 @@
   },
   "keywords": [],
   "author": "lin1987www@gmail.com",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
@@ -47,11 +46,6 @@
     "webpack-manifest-plugin": "^2.0.4",
     "webpack-merge": "^4.1.4",
     "xml-loader": "^1.2.1"
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-env"
-    ]
   },
   "dependencies": {
     "@babel/core": "^7.0.0",

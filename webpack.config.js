@@ -6,7 +6,6 @@ const ManifestPlugin = require('webpack-manifest-plugin');
 const webpack = require('webpack');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-
 module.exports = {
     // Set the mode configuration option to development to make sure that the bundle is not minified
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -77,38 +76,7 @@ module.exports = {
                 options: {
                     // Explicitly disable babelrc so we don't catch various config
                     // in much lower dependencies.
-                    babelrc: false,
-                    presets: [
-                        [
-                            '@babel/env',
-                            {
-                                targets: {
-                                    browsers: [
-                                        'last 3 versions',
-                                        'Safari >= 8',
-                                        'iOS >= 8',
-                                        'ie >= 8'
-                                    ]
-                                },
-                                "debug": true,
-                                "useBuiltIns": "entry", // 使用 babel 的 polyfill
-                            }
-                        ],
-                        '@babel/react'
-                    ],
-                    plugins: [
-                        /*
-                        'syntax-dynamic-import',
-                        'transform-object-rest-spread',
-                        */
-                        "@babel/plugin-syntax-dynamic-import",
-                        "@babel/plugin-proposal-object-rest-spread",
-                        "@babel/plugin-syntax-import-meta",
-                        "@babel/plugin-proposal-class-properties",
-                        "@babel/plugin-proposal-json-strings",
-                        "@babel/plugin-proposal-export-default-from",
-                        "@babel/plugin-proposal-export-namespace-from",
-                    ],
+                    babelrc: true,
                 }
             },
             {

@@ -75,7 +75,26 @@ describe('List', function () {
     describe('#traverse()', function () {
         it('should equal', function () {
             let list = List.of([1, 2, 3], [4, 5]);
-            expect(list.traverse(x => x)).to.deep.equal(List.of([1, 4], [1, 5], [2, 4], [2, 5], [3, 4], [3, 5]));
+            expect(list.traverse(x => x)).to.deep.equal([[1, 4], [1, 5], [2, 4], [2, 5], [3, 4], [3, 5]]);
+        });
+        it('should equal - 2', function () {
+            // func(3)
+            // > [0,1,2,3]
+            // func(2)
+            // > [0,1,2]
+            let func = (x) => {
+                return Array.from({length: x + 1}, (value, index) => index);
+            };
+            let list = func(3);
+            list = List.from(list);
+            expect(list.traverse(func)).to.deep.equal(
+                [
+                    [0, 0, 0, 0], [0, 0, 0, 1], [0, 0, 0, 2], [0, 0, 0, 3], [0, 0, 1, 0], [0, 0, 1, 1],
+                    [0, 0, 1, 2], [0, 0, 1, 3], [0, 0, 2, 0], [0, 0, 2, 1], [0, 0, 2, 2], [0, 0, 2, 3],
+                    [0, 1, 0, 0], [0, 1, 0, 1], [0, 1, 0, 2], [0, 1, 0, 3], [0, 1, 1, 0], [0, 1, 1, 1],
+                    [0, 1, 1, 2], [0, 1, 1, 3], [0, 1, 2, 0], [0, 1, 2, 1], [0, 1, 2, 2], [0, 1, 2, 3]
+                ]
+            );
         });
     });
 });

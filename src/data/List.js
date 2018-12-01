@@ -20,8 +20,8 @@ class List extends ListImplement {
         return createList(Array.of(...args));
     }
 
-    static from(obj) {
-        return createList(Array.from(obj));
+    static from(...args) {
+        return createList(Array.from(...args));
     }
 
     constructor(...args) {

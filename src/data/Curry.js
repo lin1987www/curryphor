@@ -20,17 +20,17 @@ class Curry extends CurryImplement {
         return f_a;
     }
 
-    static it(fn, arity, prependArgs) {
+    static it(fn, arity, applyThis, prependArgs) {
         if (Curry.prototype.isPrototypeOf(fn)) {
             // Didn't need to create new Currying, because it will create instance every call.
             return fn;
         }
-        return curry(fn, arity, prependArgs);
+        return curry(fn, arity, applyThis, prependArgs);
     }
 
-    constructor(fn, arity, prependArgs) {
+    constructor(fn, arity, applyThis, prependArgs) {
         super();
-        let curryInstance = curry(fn, arity, prependArgs);
+        let curryInstance = curry(fn, arity, applyThis, prependArgs);
         return curryInstance;
     }
 
@@ -120,14 +120,15 @@ class Curry extends CurryImplement {
 function currying(bound, ...args) {
     let fn = bound.fn;
     let arity = bound.arity;
+    let applyThis = bound.applyThis;
     if (args.length < arity) {
         // args is not enough
-        let curryingNext = curry(fn, arity, args);
+        let curryingNext = curry(fn, arity, applyThis, args);
         return curryingNext;
     } else {
         let applyArgs = args.slice(0, arity);
         let theRestArgs = args.slice(arity);
-        let result = fn.apply(null, applyArgs);
+        let result = fn.apply(applyThis, applyArgs);
         if (theRestArgs.length == 0) {
             // args is just enough
             return result;
@@ -139,7 +140,7 @@ function currying(bound, ...args) {
 };
 Object.setPrototypeOf(currying, Curry.prototype);
 
-function curry(fn, arity, prependArgs) {
+function curry(fn, arity, applyThis, prependArgs) {
     arity = arity || fn.length;
     prependArgs = prependArgs || [];
     let bound = {};
@@ -147,6 +148,7 @@ function curry(fn, arity, prependArgs) {
     instance['bound'] = bound;
     bound.fn = fn;
     bound.arity = arity;
+    bound.applyThis = applyThis;
     bound.prependArgs = prependArgs;
     //
     let p = Curry.prototype;

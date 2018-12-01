@@ -1,2 +1,4 @@
-export * from './data/List';
-export * from './data/Curry';
+import List from './data/List';
+import {Curry} from './data/Curry';
+
+export {Curry, List }

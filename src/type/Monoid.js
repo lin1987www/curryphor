@@ -17,9 +17,9 @@ class Monoid extends Semigroup {
     }
 
     mconcat() {
-        console.log('Monoid.[[Prototype]].mconcat');
         // mconcat :: Monoid a => [a] -> a
         // Fantasy Land did not define
+        console.log('Monoid.[[Prototype]].mconcat');
     }
 }
 

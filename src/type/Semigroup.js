@@ -13,8 +13,9 @@ class Semigroup {
     }
 
     concat(a) {
-        console.log('Semigroup.[[Prototype]].concat');
         // mappend :: Semigroup => a -> a -> a
+        // taking a and a for getting a
+        console.log('Semigroup.[[Prototype]].concat');
     }
 
     mappend(a) {

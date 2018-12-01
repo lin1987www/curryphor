@@ -1,8 +1,9 @@
 {
   "name": "curryphor",
-  "version": "0.5.9",
+  "version": "0.5.10",
   "description": "Curryphor\r =========",
   "private": false,
+  "main": "./src/index.js",
   "scripts": {
     "test": "mocha --require @babel/register ./test/index.js",
     "watch": "webpack --watch",

@@ -1,4 +1,4 @@
-import {List} from './data/List';
 import {Curry} from './data/Curry';
+import {List} from './data/List';
 
-export {Curry, List }
+export {Curry, List};

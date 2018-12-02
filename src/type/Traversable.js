@@ -20,6 +20,10 @@ class Traversable extends TraversableInterface {
         //      applying (a -> f b) function to a for getting f b
         //      applying Functor map function to (b -> t b -> t b) and f b for getting f (t b -> t b)
         //      applying Applicative ap function to f (t b -> t b) and f (t b) for getting f (t b)
+        //
+        // (b -> t b -> t b) would be (t b -> t b -> t b) compose (b -> t b)
+        // (t b -> t b -> t b) like  Semigroup concat method which instance of t
+        // (b -> t b) like Applicative of method which instance of t
 
 
         // sequenceA :: (Applicative f, Traversable t) => t (f a) -> f (t a)

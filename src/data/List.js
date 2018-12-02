@@ -4,6 +4,7 @@ import {Foldable} from "../type/Foldable";
 import {Monoid} from "../type/Monoid";
 import {Monad} from "../type/Monad";
 import {Traversable} from "../type/Traversable";
+import {transform} from "../utility";
 
 const ListInterface = mix('ListInterface', [Foldable, Monoid, Monad, Traversable]);
 
@@ -102,23 +103,63 @@ class List extends ListImplement {
         // traverse :: (Applicative f, Traversable t) => t a ~> (a -> f b) -> f (t b)
         // instance Traversable [] where
         //     traverse f xs = foldr (\x v -> (:) <$> f x <*> v) (pure []) xs
-        let result = this.reduceRight((v, x) => {
-            // fb :: [a]
+        let t = this.constructor;
+        if (this.length == 0) {
+            return t.of();
+        }
+        // TODO concat  curry 化
+        // concat :: t a -> t a -> t a
+        // concat :: [a] -> [a] -> [a]
+        let concat = (a1, a2) => {
+            return a1.concat(a2);
+        };
+        concat = Curry.from(concat);
+        // tOf :: a -> t a
+        let tOf = x => t.of(x);
+        // ataConcat = fmap (t a -> t a -> t a) -> (a -> t a)
+        // ataConcat = fmap ([a] -> [a] -> [a]) -> (a -> [a])
+        // ataConcat :: a -> t a -> t a
+        // ataConcat :: a -> [a] -> [a]
+        let ataConcat = concat.fmap(tOf);
+        let aLast = this[this.length - 1];
+        // fbLast :: f b
+        let fbLast = transform(afb(aLast));
+        let f = fbLast.constructor;
+        // init :: f ( t b )
+        let init = f.of(t.of());
+        // ftbtbLast = fmap (a -> t a -> t a) f b
+        // ftbtbLast :: f (t b -> t b)
+        let ftbtbLast = fbLast.map(ataConcat);
+        // ftbLast = f (t b) <**> f (t b -> t b)
+        // ftbLast = f (t b)
+        let ftbLast = init.ap(ftbtbLast);
+        let theRest = this.slice(0, this.length - 1);
+        let result = theRest.reduceRight((v, x) => {
+            // fb :: f b
             let fb = afb(x);
-            fb = List.from(fb);
-            // concat2 :: [a] -> [a] -> [a]
-            let concat2 = (a1, a2) => {
-                return [a1].concat(a2);
-            };
-            concat2 = Curry.it(concat2);
-            // fb_concat :: [[a] -> [a]]
-            let fb_concat = fb.map(concat2);
+            fb = transform(fb);
+            // fb_concat = f b <&> (a -> t a -> t a)
+            // fb_concat = (a -> t a -> t a) <$> f b
+            // fb_concat = fmap (a -> t a -> t a) f b
+            // apply (a -> t a -> t a) to b which extracting from f b, so it become ([b] -> [b])
+            // fb_concat = f b <&> (a -> [a] -> [a])
+            // fb_concat = map f b (a -> [a] -> [a])
+            // fb_concat = (a -> [a] -> [a]) <$> f b
+            // fb_concat = fmap (a -> [a] -> [a]) f b
+            // fb_concat :: f (t b -> t b)
+            // fb_concat :: f ([b] -> [b])
+            let fb_concat = fb.map(ataConcat);
+            // result = f (t b) <**> f (t b -> t b)
+            // result :: f (t b)
+            // result :: f [b]
             let result = v.ap(fb_concat);
             return result;
-        }, List.of([]));
+        }, ftbLast);
         return result;
     }
 }
+
+const traverseReduceRightInit = Symbol("traverse.reduceRight.init");
 
 function createList(array, instance) {
     instance = instance || Object.create(List.prototype);

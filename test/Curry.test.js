@@ -6,7 +6,7 @@ const {assert, expect, should} = require('chai');
 describe('Curry', function () {
     describe('is', function () {
         let c = Curry;
-        let f = Curry.it(() => 1);
+        let f = Curry.from(() => 1);
         it('Currying should be instance of Function', function () {
             assert.equal(f instanceof Function, true);
         });
@@ -25,12 +25,12 @@ describe('Curry', function () {
     });
     describe('basic', function () {
         it('Curry currying function should return the same function.', function () {
-            let f = Curry.it(cPlus3number);
-            let f1 = Curry.it(f);
+            let f = Curry.from(cPlus3number);
+            let f1 = Curry.from(f);
             assert.equal(f, f1);
         });
         let plus3number = (x, y, z) => x + y + z;
-        let cPlus3number = Curry.it(plus3number);
+        let cPlus3number = Curry.from(plus3number);
         it('currying.apply()', function () {
             let f1 = cPlus3number.apply('plus 1', [1]);
             let f2 = f1.apply(null, [1]);
@@ -49,7 +49,7 @@ describe('Curry', function () {
         });
         it('(x -> y -> z -> a -> b -> c) -> x -> y -> z -> a -> b -> c', function () {
             let func = (x, y, z, a, b) => x + y + z + a + b;
-            let f = Curry.it(func);
+            let f = Curry.from(func);
             let f1 = f.call(null, 1);
             let f12 = f1.apply(null, [2]);
             let f123 = f12.bind(null, 3);
@@ -71,7 +71,7 @@ describe('Curry', function () {
             // f :: (b -> c)
             let ab = (x) => x + 100;
             let fa = List.from([1, 2, 3]);
-            ab = Curry.it(ab);
+            ab = Curry.from(ab);
             let result1 = fa.map(ab);
             expect(result1).to.deep.equal(List.of(101, 102, 103));
         });
@@ -79,7 +79,7 @@ describe('Curry', function () {
             let g = (x, y, z) => {
                 return x + y + z;
             };
-            g = Curry.it(g);
+            g = Curry.from(g);
             let f = (x) => {
                 return x;
             };
@@ -95,7 +95,7 @@ describe('Curry', function () {
         // Haskell (<$>) :: Functor f => (a -> b) -> f a -> f b
         it('(b -> c) -> (a -> b) -> a -> c', function () {
             // f :: (b -> c)
-            let bc = Curry.it((x) => x + 100);
+            let bc = Curry.from((x) => x + 100);
             // g :: (a -> b)
             let ab = (x) => x + 20;
             // f 。 g  :: (b -> c) -> (a -> b)
@@ -105,11 +105,11 @@ describe('Curry', function () {
         });
         it('(b -> c) -> (a1 -> a2 -> b) -> a1 -> a2 -> c', function () {
             // f :: (b -> c)
-            let bc = Curry.it((b) => {
+            let bc = Curry.from((b) => {
                 return b + 100;
             });
             // g :: (a1 -> a2 -> b)
-            let a1a2b = Curry.it((x, y) => {
+            let a1a2b = Curry.from((x, y) => {
                 return x + y + 20;
             });
             // :: (a2 -> b)
@@ -128,7 +128,7 @@ describe('Curry', function () {
         });
         it('(b -> c -> d) -> (a -> b) -> a -> c -> d', function () {
             // f :: (b -> c -> d)
-            let f = Curry.it((b, c) => b + c);
+            let f = Curry.from((b, c) => b + c);
             // g :: (a -> b)
             let g = (x) => x + 20;
             // fg :: ( b -> c -> d) -> (a -> b)
@@ -147,7 +147,7 @@ describe('Curry', function () {
         });
         it('((b1 -> b2) -> c) -> (a -> (b1 -> b2)) -> a -> c', function () {
             // f :: ((b1 -> b2) -> c)
-            let f = Curry.it(fb => fb(100));
+            let f = Curry.from(fb => fb(100));
             // g :: (a -> ( b1 -> b2 ))
             // g :: (a -> b1 -> b2) , is equivalent because currying.
             let g = (x, y) => x + y + 20;
@@ -175,7 +175,7 @@ describe('Curry', function () {
         it('(<**>) :: f a -> f (a -> b) -> f b', function () {
             let f = (x, y) => x / y;
             let g = (x) => x + 90;
-            g = Curry.it(g);
+            g = Curry.from(g);
             let gxfx = g.ap(f);
             let x = 10;
             let result = gxfx(x);
@@ -186,7 +186,7 @@ describe('Curry', function () {
         it('(<*>) :: f (a -> b) -> f a -> f b', function () {
             let f = (x, y) => x / y;
             let g = (x) => x + 90;
-            f = Curry.it(f);
+            f = Curry.from(f);
             let fxgx = f.apH(g);
             let x = 10;
             let result = fxgx(x);
@@ -197,7 +197,7 @@ describe('Curry', function () {
         it('(>>=) :: (r -> a) -> (a -> (r -> b)) -> r -> b', function () {
             let f = (x, y) => x / y;
             let g = (x) => x + 90;
-            g = Curry.it(g);
+            g = Curry.from(g);
             let gxfx = g.chain(f);
             let x = 10;
             let result = gxfx(x);

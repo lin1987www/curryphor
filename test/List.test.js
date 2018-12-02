@@ -1,4 +1,6 @@
 import {List} from '../src/data/List';
+import {id} from "../src/utility";
+import {Curry} from "../src/data/Curry";
 
 const {assert, expect, should} = require('chai');
 
@@ -15,7 +17,6 @@ describe('List', function () {
         });
     });
     describe('#ap()', function () {
-        let id = x => x;
         let square = x => x * x;
         let fs = [id, square];
         it('should equal', function () {
@@ -74,6 +75,8 @@ describe('List', function () {
     });
     describe('#traverse()', function () {
         it('should equal', function () {
+            expect(List.of().traverse(x => x)).to.deep.equal([]);
+            expect(List.of([]).traverse(x => x)).to.deep.equal([]);
             let list = List.of([1, 2, 3], [4, 5]);
             expect(list.traverse(x => x)).to.deep.equal([[1, 4], [1, 5], [2, 4], [2, 5], [3, 4], [3, 5]]);
         });
@@ -94,6 +97,22 @@ describe('List', function () {
                     [0, 1, 0, 0], [0, 1, 0, 1], [0, 1, 0, 2], [0, 1, 0, 3], [0, 1, 1, 0], [0, 1, 1, 1],
                     [0, 1, 1, 2], [0, 1, 1, 3], [0, 1, 2, 0], [0, 1, 2, 1], [0, 1, 2, 2], [0, 1, 2, 3]
                 ]
+            );
+        });
+        it('should equal - 3', function () {
+            // add :: a -> a -> a
+            let add = (x, y) => {
+                return x + y;
+            };
+            add = Curry.from(add);
+            // add1 :: a -> a
+            let add1 = add(1);
+            let add2 = add(2);
+            let add3 = add(3);
+            // list :: [a -> a]
+            list = List.of(add1, add2, add3);
+            expect(list.traverse(id)(0)).to.deep.equal(
+                [1, 2, 3]
             );
         });
     });

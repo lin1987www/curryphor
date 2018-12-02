@@ -1,26 +1,28 @@
 import {mix} from '../mix';
 import {Monad} from '../type/Monad';
 import {List} from "./List";
+import {transform} from "../utility";
 
 const CurryInterface = mix('CurryInterface', [Monad]);
 
 const CurryImplement = mix('CurryImplement', [CurryInterface, Function], Function);
 
 class Curry extends CurryImplement {
+    // TODO   公用 curry ?
     static map(bc, ab) {
         // Haskell (<$>) :: Functor f => (a -> b) -> f a -> f b
         // map :: (b -> c) -> (a -> b) -> a -> c
         // compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k
-        return Curry.it(ab).map(bc);
+        return Curry.from(ab).map(bc);
     }
 
     static of(a) {
         let _a = _ => a;
-        let f_a = Curry.it(_a);
+        let f_a = Curry.from(_a);
         return f_a;
     }
 
-    static it(fn, arity, applyThis, prependArgs) {
+    static from(fn, arity, applyThis, prependArgs) {
         if (Curry.prototype.isPrototypeOf(fn)) {
             // Didn't need to create new Currying, because it will create instance every call.
             return fn;
@@ -41,14 +43,14 @@ class Curry extends CurryImplement {
         // map :: (a -> b) -> (b -> c) -> a -> c
         //
         // Haskell (<&>) :: Functor f => f a -> (a -> b) -> f b
-        bc = Curry.it(bc);
+        bc = Curry.from(bc);
         let ab = this;
         let c = function (a) {
             let b = ab(a);
             let c = bc(b);
             return c;
         }
-        let c1 = Curry.it(c);
+        let c1 = Curry.from(c);
         return c1;
     }
 
@@ -60,11 +62,7 @@ class Curry extends CurryImplement {
         // compose - fmap (a -> b) ((->) r a)
         // (.) :: (b -> c) -> (a -> b) -> a -> c
         // (.) f g = \x -> f (g x)
-        if (Function.prototype.isPrototypeOf(fa) && !Curry.prototype.isPrototypeOf(fa)) {
-            fa = Curry.it(fa);
-        } else if (Array.prototype.isPrototypeOf(fa) && !List.prototype.isPrototypeOf(fa)) {
-            fa = List.from(fa);
-        }
+        fa = transform(fa);
         return fa.map(this);
     }
 
@@ -78,12 +76,12 @@ class Curry extends CurryImplement {
         // (<**>) :: f a -> f (a -> b) -> f b
         // (<**>) :: (a -> a0) -> (a -> (a0 -> b)) -> a -> b
         // (<**>) f g = \x -> g( x (f x))
-        aa0b = Curry.it(aa0b);
+        aa0b = Curry.from(aa0b);
         let aa0 = this;
         let b = (a) => {
             return aa0b(a, aa0(a));
         };
-        let b1 = Curry.it(b);
+        let b1 = Curry.from(b);
         return b1;
     }
 
@@ -94,11 +92,7 @@ class Curry extends CurryImplement {
         // instance Applicative (->) r
         //     (<*>) :: (a -> (a0 -> b)) -> (a -> a0) -> a -> b
         //     (<*>) f g = \x -> f( x (g x))
-        if (Function.prototype.isPrototypeOf(fa) && !Curry.prototype.isPrototypeOf(fa)) {
-            fa = Curry.it(fa);
-        } else if (Array.prototype.isPrototypeOf(fa) && !List.prototype.isPrototypeOf(fa)) {
-            fa = List.from(fa);
-        }
+        fa = transform(fa);
         return fa.ap(this);
     }
 
@@ -106,13 +100,13 @@ class Curry extends CurryImplement {
         // (>>=) :: m a -> (a -> m b) -> m b
         // (>>=) :: (r -> a) -> (a -> (r -> b)) -> r -> b
         let ma = this;
-        amb = Curry.it(amb);
+        amb = Curry.from(amb);
         let rb = (r) => {
             let a = ma(r);
             let b = amb(a, r);
             return b;
         };
-        let rb1 = Curry.it(rb);
+        let rb1 = Curry.from(rb);
         return rb1;
     }
 }

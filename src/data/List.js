@@ -1,10 +1,10 @@
-import {mix} from "../mix";
-import {Curry} from "./Curry";
-import {Foldable} from "../type/Foldable";
-import {Monoid} from "../type/Monoid";
-import {Monad} from "../type/Monad";
-import {Traversable} from "../type/Traversable";
-import {transform} from "../utility";
+import {mix} from '../mix';
+import {Curry} from './Curry';
+import {Foldable} from '../type/Foldable';
+import {Monoid} from '../type/Monoid';
+import {Monad} from '../type/Monad';
+import {Traversable} from '../type/Traversable';
+import {transform} from '../utility';
 
 const ListInterface = mix('ListInterface', [Foldable, Monoid, Monad, Traversable]);
 
@@ -158,8 +158,6 @@ class List extends ListImplement {
         return result;
     }
 }
-
-const traverseReduceRightInit = Symbol("traverse.reduceRight.init");
 
 function createList(array, instance) {
     instance = instance || Object.create(List.prototype);

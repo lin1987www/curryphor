@@ -1,4 +1,4 @@
-import {Apply} from './Apply'
+import {Apply} from './Apply';
 
 class Applicative extends Apply {
     static of(...a) {

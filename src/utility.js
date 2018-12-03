@@ -1,5 +1,5 @@
-import {Curry} from "./data/Curry";
-import {List} from "./data/List";
+import {Curry} from './data/Curry';
+import {List} from './data/List';
 
 function transform(data) {
     if (Function.prototype.isPrototypeOf(data) && !Curry.prototype.isPrototypeOf(data)) {
@@ -12,4 +12,4 @@ function transform(data) {
 
 let id = (x) => x;
 
-export {transform, id}
+export {transform, id};

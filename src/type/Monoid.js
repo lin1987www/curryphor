@@ -1,4 +1,4 @@
-import {Semigroup} from "./Semigroup";
+import {Semigroup} from './Semigroup';
 
 class Monoid extends Semigroup {
 

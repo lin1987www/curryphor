@@ -1,4 +1,4 @@
-import {Curry} from "../src/data/Curry";
+import {Curry} from '../src/data/Curry';
 import {List} from '../src/data/List';
 
 const {assert, expect, should} = require('chai');

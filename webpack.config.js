@@ -17,7 +17,7 @@ module.exports = {
     entry: {
         'lib.min': ['react', 'react-dom'],
         'app': ['./src/index.js'],
-        'test': ["@babel/polyfill", './test/index.js'],
+        'test': ['@babel/polyfill', './test/index.js'],
     },
     output: {
         // filename: 'main.js',

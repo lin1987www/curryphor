@@ -1,6 +1,6 @@
 import {List} from '../src/data/List';
-import {id} from "../src/utility";
-import {Curry} from "../src/data/Curry";
+import {id} from '../src/utility';
+import {Curry} from '../src/data/Curry';
 
 const {assert, expect, should} = require('chai');
 
@@ -61,7 +61,7 @@ describe('List', function () {
         it('should equal', function () {
             expect(list.reduce((a, x) => {
                 a.push(x * 2);
-                return a
+                return a;
             }, [])).to.deep.equal(List.of(2, 4, 6));
         });
     });
@@ -69,7 +69,7 @@ describe('List', function () {
         it('should equal', function () {
             expect(list.reduceRight((a, x) => {
                 a.push(x * 2);
-                return a
+                return a;
             }, [])).to.deep.equal(List.of(6, 4, 2));
         });
     });

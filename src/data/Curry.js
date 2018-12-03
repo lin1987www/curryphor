@@ -1,7 +1,7 @@
 import {mix} from '../mix';
 import {Monad} from '../type/Monad';
-import {List} from "./List";
-import {transform} from "../utility";
+import {List} from './List';
+import {transform} from '../utility';
 
 const CurryInterface = mix('CurryInterface', [Monad]);
 
@@ -45,12 +45,14 @@ class Curry extends CurryImplement {
         // Haskell (<&>) :: Functor f => f a -> (a -> b) -> f b
         bc = Curry.from(bc);
         let ab = this;
-        let c = function (a) {
+        let compose = function (a) {
             let b = ab(a);
             let c = bc(b);
             return c;
-        }
-        let c1 = Curry.from(c);
+        };
+        // TODO 改名並解新增屬性  比較好debug
+
+        let c1 = Curry.from(compose);
         return c1;
     }
 
@@ -78,10 +80,10 @@ class Curry extends CurryImplement {
         // (<**>) f g = \x -> g( x (f x))
         aa0b = Curry.from(aa0b);
         let aa0 = this;
-        let b = (a) => {
+        let apImpl = (a) => {
             return aa0b(a, aa0(a));
         };
-        let b1 = Curry.from(b);
+        let b1 = Curry.from(apImpl);
         return b1;
     }
 
@@ -131,7 +133,7 @@ function currying(bound, ...args) {
             return result(...theRestArgs);
         }
     }
-};
+}
 Object.setPrototypeOf(currying, Curry.prototype);
 
 function curry(fn, arity, applyThis, prependArgs) {
@@ -156,4 +158,3 @@ function curry(fn, arity, applyThis, prependArgs) {
 }
 
 export {Curry};
-

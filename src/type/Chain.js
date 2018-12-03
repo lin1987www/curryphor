@@ -1,4 +1,4 @@
-import {Apply} from "./Apply";
+import {Apply} from './Apply';
 
 class Chain extends Apply {
     static chain(ma, amb) {
@@ -24,12 +24,12 @@ class Chain extends Apply {
         }
     }
 
-    cchain(amb) {
+    cchain (amb) {
         console.log('Chain.[[Prototype]].mchain');
         // Chain m => m a ~> (a -> m b) -> m b
     }
 
-    fail(e) {
+    fail (e) {
         throw e;
     }
 }

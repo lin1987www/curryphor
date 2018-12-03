@@ -1,16 +1,16 @@
 import {mix} from '../mix';
-import {Foldable} from "./Foldable";
-import {Functor} from "./Functor";
+import {Foldable} from './Foldable';
+import {Functor} from './Functor';
 
 const TraversableInterface = mix('TraversableInterface', [Functor, Foldable]);
 
 class Traversable extends TraversableInterface {
 
-    constructor() {
+    constructor () {
         super();
     }
 
-    traverse(afb) {
+    traverse (afb) {
         // class (Functor t, Foldable t) => Traversable t where
         //
         // traverse :: (Applicative f, Traversable t)  => (a -> f b) -> t a -> f (t b)
@@ -42,7 +42,7 @@ class Traversable extends TraversableInterface {
         console.log('Traversable.[[prototype]].traverse');
     }
 
-    sequenceA() {
+    sequenceA () {
         // sequenceA :: Applicative f => t (f a) -> f (t a)
         return this.traverse(x => x);
     }

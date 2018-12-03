@@ -30,10 +30,10 @@ const mix = (name, fns, extendsClass) => {
                     if (constructorArray.indexOf(constructor) == -1) {
                         constructorArray.push(constructor);
                     }
-                    recordAllConstructors(constructorArrayArray, Object.getPrototypeOf(constructor), index + 1)
+                    recordAllConstructors(constructorArrayArray, Object.getPrototypeOf(constructor), index + 1);
                 });
             }
-        };
+        }
         recordAllConstructors(accumulator, currentValue, 0);
         return accumulator;
     }, []);
@@ -47,7 +47,7 @@ const mix = (name, fns, extendsClass) => {
                 }
                 return lastIndex;
             }, -1);
-        };
+        }
         let constructorArray = currentValue.filter(constructor => index == findLastIndex(constructor));
         if (constructorArray.length > 0) {
             accumulator.push(constructorArray);
@@ -91,7 +91,7 @@ const mix = (name, fns, extendsClass) => {
 
         let constructorNames = constructorArray.map(constructor => constructor.name);
         let newClassName = '[' + constructorNames.join(', ') + ']';
-        Object.defineProperty(newClass, "name", {value: newClassName});
+        Object.defineProperty(newClass, 'name', {value: newClassName});
 
         if (index < array.length - 1) {
             let f = function () {
@@ -109,10 +109,10 @@ const mix = (name, fns, extendsClass) => {
         Object.setPrototypeOf(lastClass.prototype, extendsClass.prototype);
     }
 
-    Object.defineProperty(F, "name", {value: name});
+    Object.defineProperty(F, 'name', {value: name});
 
     return F;
-}
+};
 
 export {mix, MIX};
 

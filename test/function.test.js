@@ -24,10 +24,10 @@ describe('function', function () {
         });
         it('prototype', function () {
             function A() {
-            };
+            }
 
             function B() {
-            };
+            }
             // class B extends A
             Object.setPrototypeOf(B, A);
             Object.setPrototypeOf(B.prototype, A.prototype);
@@ -62,11 +62,11 @@ describe('function', function () {
             }
             // object fPrototypeOfA extends A
             let fPrototypeOfA = Object.create(A.prototype);
-            fPrototypeOfA.tag = "f.[[prototype]]";
+            fPrototypeOfA.tag = 'f.[[prototype]]';
 
             function f(x) {
                 return x;
-            };
+            }
             assert.equal(Function.prototype.isPrototypeOf(f), true);
             // change function f extends Object
             Object.setPrototypeOf(f, Object.prototype);
@@ -79,7 +79,7 @@ describe('function', function () {
             assert.equal(f.tag === fPrototypeOfA.tag, true);
             let f1 = f.bind(null);
             assert.equal(f1.tag === fPrototypeOfA.tag, true);
-            fPrototypeOfA.tag = "f.[[prototype]] change 1";
+            fPrototypeOfA.tag = 'f.[[prototype]] change 1';
             assert.equal(Object.getPrototypeOf(f1) === Object.getPrototypeOf(f), true);
             assert.equal(f1 === f, false);
             //
@@ -88,8 +88,8 @@ describe('function', function () {
             let fx = {};
             let f2 = f.bind(null, fx);
             assert.equal(f2() === fx, true);
-            fx.tag = "fx";
-            assert.equal(f2().tag === "fx", true);
+            fx.tag = 'fx';
+            assert.equal(f2().tag === 'fx', true);
         });
     });
 });

@@ -1,6 +1,6 @@
 {
   "name": "curryphor",
-  "version": "0.5.16 CRLF",
+  "version": "0.5.17",
   "description": "Curryphor\r =========",
   "private": false,
   "main": "./src/index.js",

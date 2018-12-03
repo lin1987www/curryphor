@@ -34,7 +34,8 @@ class List extends ListImplement {
         // Functor f => f a ~>  (a -> b) -> f b
         let ab1 = ab;
         if (Curry.prototype.isPrototypeOf(ab)) {
-            ab1 = (currentValue, index, array) => {
+            // for ignore index and array optional parameters
+            ab1 = (currentValue) => {
                 return ab(currentValue);
             };
         }
@@ -62,7 +63,7 @@ class List extends ListImplement {
         }, List.of());
     }
 
-    fail(e) {
+    fail() {
         return List.of();
     }
 
@@ -81,7 +82,8 @@ class List extends ListImplement {
         // Foldable f => f b ~> (a -> b -> a) -> a -> a
         let aba1 = aba;
         if (Curry.prototype.isPrototypeOf(aba)) {
-            aba1 = (accumulator, currentValue, index, array) => {
+            // for ignore index and array optional parameters
+            aba1 = (accumulator, currentValue) => {
                 return aba(accumulator, currentValue);
             };
         }
@@ -92,7 +94,8 @@ class List extends ListImplement {
         // Foldable f => f b ~> (a -> b -> a) -> a -> a
         let aba1 = aba;
         if (Curry.prototype.isPrototypeOf(aba)) {
-            aba1 = (accumulator, currentValue, index, array) => {
+            // for ignore index and array optional parameters
+            aba1 = (accumulator, currentValue) => {
                 return aba(accumulator, currentValue);
             };
         }

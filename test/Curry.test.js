@@ -5,7 +5,6 @@ const {assert, expect, should} = require('chai');
 
 describe('Curry', function () {
     describe('is', function () {
-        let c = Curry;
         let f = Curry.from(() => 1);
         it('Currying should be instance of Function', function () {
             assert.equal(f instanceof Function, true);

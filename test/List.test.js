@@ -53,7 +53,6 @@ describe('List', function () {
         it('should be empty, because throw a error.', function () {
             expect(list.chain(x => {
                 throw new Error('Throw a error');
-                return x;
             })).to.deep.equal(List.of());
         });
     });

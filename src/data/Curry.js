@@ -1,6 +1,5 @@
 import {mix} from '../mix';
 import {Monad} from '../type/Monad';
-import {List} from './List';
 import {transform} from '../utility';
 
 const CurryInterface = mix('CurryInterface', [Monad]);
@@ -17,8 +16,8 @@ class Curry extends CurryImplement {
     }
 
     static of(a) {
-        let _a = _ => a;
-        let f_a = Curry.from(_a);
+        let _a = () => a;
+        let f_a = Curry.from(_a, 1);
         return f_a;
     }
 
@@ -134,6 +133,7 @@ function currying(bound, ...args) {
         }
     }
 }
+
 Object.setPrototypeOf(currying, Curry.prototype);
 
 function curry(fn, arity, applyThis, prependArgs) {

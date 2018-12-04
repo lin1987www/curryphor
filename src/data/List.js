@@ -1,17 +1,14 @@
-import {mix} from '../mix';
 import {Curry} from './Curry';
+import {transform} from '../utility';
+import {mix} from '../mix';
 import {Foldable} from '../type/Foldable';
 import {Monoid} from '../type/Monoid';
 import {Monad} from '../type/Monad';
 import {Traversable} from '../type/Traversable';
-import {transform} from '../utility';
 
-const ListInterface = mix('ListInterface', [Foldable, Monoid, Monad, Traversable]);
+const ListBase = mix('ListImplement', [Foldable, Monoid, Monad, Traversable, Array], Array);
 
-const ListImplement = mix('ListImplement', [ListInterface, Array], Array);
-
-class List extends ListImplement {
-    // Instance.method -> Prototype.method -> Constructor.method
+class List extends ListBase {
 
     static empty() {
         return this.of();
@@ -32,19 +29,22 @@ class List extends ListImplement {
 
     map(ab) {
         // Functor f => f a ~>  (a -> b) -> f b
-        let ab1 = ab;
+        // map :: [a] ~> (a -> b) -> [b]
+        let callback = ab;
         if (Curry.prototype.isPrototypeOf(ab)) {
             // for ignore index and array optional parameters
-            ab1 = (currentValue) => {
+            let list_map = (currentValue) => {
                 return ab(currentValue);
             };
+            callback = list_map;
         }
-        return super.map(ab1);
+        return super.map(callback);
     }
 
     ap(fab) {
         // 跟 Haskell 定義相反，但是結果一致! 由 fab fa 的巢狀結構
         // Apply f => f a ~> f (a -⁠> b) -⁠> f b
+        // ap :: [a] ~> [(a -> b)] -> [b]
         return fab.reduce((fb, ab) => {
             return fb.concat(
                 this.reduce((fb, a) => {
@@ -58,6 +58,7 @@ class List extends ListImplement {
     cchain(amb) {
         // built-in flatMap only accept one function, but chain can accept a array of functions
         // Chain m => m a ~> (a -> m b) -> m b
+        // cchain :: [a] ~> (a -> [b]) -> [b]
         return this.reduce((mb, a) => {
             return mb.concat(amb(a));
         }, List.of());
@@ -68,7 +69,9 @@ class List extends ListImplement {
     }
 
     concat(a) {
-        // mappend :: Semigroup => a -> a -> a
+        // mappend = (<>)
+        // (<>) :: Semigroup a => a -> a -> a
+        // concat :: Semigroup [a] => [a] -> [a] -> [a]
         return super.concat(a);
     }
 
@@ -80,26 +83,30 @@ class List extends ListImplement {
 
     reduce(aba, a) {
         // Foldable f => f b ~> (a -> b -> a) -> a -> a
-        let aba1 = aba;
+        // reduce :: [b] ~> (a -> b -> a) -> a -> a
+        let callback = aba;
         if (Curry.prototype.isPrototypeOf(aba)) {
             // for ignore index and array optional parameters
-            aba1 = (accumulator, currentValue) => {
+            let list_reduce = (accumulator, currentValue) => {
                 return aba(accumulator, currentValue);
             };
+            callback = list_reduce;
         }
-        return super.reduce(aba1, a);
+        return super.reduce(callback, a);
     }
 
     reduceRight(aba, a) {
         // Foldable f => f b ~> (a -> b -> a) -> a -> a
-        let aba1 = aba;
+        // reduceRight :: [b] ~> (a -> b -> a) -> a -> a
+        let callback = aba;
         if (Curry.prototype.isPrototypeOf(aba)) {
             // for ignore index and array optional parameters
-            aba1 = (accumulator, currentValue) => {
+            let list_reduceRight = (accumulator, currentValue) => {
                 return aba(accumulator, currentValue);
             };
+            callback = list_reduceRight;
         }
-        return super.reduceRight(aba1, a);
+        return super.reduceRight(callback, a);
     }
 
     traverse(afb) {
@@ -110,10 +117,9 @@ class List extends ListImplement {
         if (this.length == 0) {
             return t.of();
         }
-        // TODO concat  curry 化
-        // concat :: t a -> t a -> t a
-        // concat :: [a] -> [a] -> [a]
         let concat = (a1, a2) => {
+            // concat :: t a -> t a -> t a
+            // concat :: [a] -> [a] -> [a]
             return a1.concat(a2);
         };
         concat = Curry.from(concat);
@@ -161,6 +167,7 @@ class List extends ListImplement {
         return result;
     }
 }
+
 
 function createList(array, instance) {
     instance = instance || Object.create(List.prototype);

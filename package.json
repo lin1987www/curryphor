@@ -1,6 +1,6 @@
 {
   "name": "curryphor",
-  "version": "0.5.18",
+  "version": "0.5.19",
   "description": "Curryphor\r =========",
   "private": false,
   "main": "./src/index.js",

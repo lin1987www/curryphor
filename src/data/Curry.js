@@ -1,24 +1,17 @@
+import {transform} from '../utility';
 import {mix} from '../mix';
 import {Monad} from '../type/Monad';
-import {transform} from '../utility';
 
-const CurryInterface = mix('CurryInterface', [Monad]);
+const CurryBase = mix('CurryImplement', [Monad, Function], Function);
 
-const CurryImplement = mix('CurryImplement', [CurryInterface, Function], Function);
-
-class Curry extends CurryImplement {
-    // TODO   公用 curry ?
-    static map(bc, ab) {
-        // Haskell (<$>) :: Functor f => (a -> b) -> f a -> f b
-        // map :: (b -> c) -> (a -> b) -> a -> c
-        // compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k
-        return Curry.from(ab).map(bc);
-    }
+class Curry extends CurryBase {
 
     static of(a) {
-        let _a = () => a;
-        let f_a = Curry.from(_a, 1);
-        return f_a;
+        // const :: r -> a -> r
+        // const x _ =  x
+        let function_of_a = () => a;
+        let of_a = Curry.from(function_of_a, 1);
+        return of_a;
     }
 
     static from(fn, arity, applyThis, prependArgs) {
@@ -35,82 +28,96 @@ class Curry extends CurryImplement {
         return curryInstance;
     }
 
-    map(bc) {
+    map(ab) {
         // Fantasy Land
-        // map :: Functor f => (a -⁠> b, f a) -⁠> f b
         // map :: Functor f => f a ~> (a -> b) -> f b
-        // map :: (a -> b) -> (b -> c) -> a -> c
+        // map :: (r -> a) -> (a -> b) -> (r -> b)
         //
-        // Haskell (<&>) :: Functor f => f a -> (a -> b) -> f b
-        bc = Curry.from(bc);
-        let ab = this;
-        let compose = function (a) {
+        // Haskell
+        // (<&>) :: Functor f => f a -> (a -> b) -> f b
+        // (<&>) :: (r -> a) -> (a -> b) -> (r -> b)
+        ab = Curry.from(ab);
+        let ra = this;
+        let compose = (r) => {
+            let a = ra(r);
             let b = ab(a);
-            let c = bc(b);
-            return c;
+            return b;
         };
-        // TODO 改名並解新增屬性  比較好debug
-
-        let c1 = Curry.from(compose);
-        return c1;
+        let rb = Curry.from(compose);
+        return rb;
     }
 
     fmap(fa) {
+        // Fantasy Land
+        // map :: Functor f => (a -⁠> b, f a) -⁠> f b
+        //
         // Haskell
         // (<$>) :: Functor f => (a -> b) -> f a -> f b
-        // fmap  :: Functor f => (a -> b) -> f a -> f b
-        //
-        // compose - fmap (a -> b) ((->) r a)
-        // (.) :: (b -> c) -> (a -> b) -> a -> c
+        // fmap :: Functor f => (a -> b) -> f a -> f b
+        // fmap :: (a -> b) -> ((->) r a) -> ((->) r b)
+        //      :: (a -> b) -> (r -> a) -> (r -> b)
+        // (.) :: (a -> b) -> (r -> a) -> (r -> b)
         // (.) f g = \x -> f (g x)
         fa = transform(fa);
-        return fa.map(this);
+        let ab = this;
+        return fa.map(ab);
     }
 
-    ap(aa0b) {
+    ap(rab) {
         // Fantasy Land
-        // ap :: Apply f => (f (a -⁠> b), f a) -⁠> f b
         // ap :: Apply f => f a ~> f (a -> b) -> f b
-        // ap f g = \x -> g( x (f x))
+        // ap :: (r -> a) ~> (r -> (a -> b)) -> (r -> b)
+        // f.ap(g) = \x -> g( x (f x))
         //
         // Haskell
         // (<**>) :: f a -> f (a -> b) -> f b
-        // (<**>) :: (a -> a0) -> (a -> (a0 -> b)) -> a -> b
+        // (<**>) :: (r -> a) -> (r -> (a -> b)) -> (r -> b)
         // (<**>) f g = \x -> g( x (f x))
-        aa0b = Curry.from(aa0b);
-        let aa0 = this;
-        let apImpl = (a) => {
-            return aa0b(a, aa0(a));
+        rab = Curry.from(rab);
+        let ra = this;
+        let function_ap_rb = (r) => {
+            let b = rab(r, ra(r));
+            return b;
         };
-        let b1 = Curry.from(apImpl);
-        return b1;
+        let rb = Curry.from(function_ap_rb);
+        return rb;
     }
 
     apH(fa) {
+        // Fantasy Land
+        // ap :: Apply f => (f (a -⁠> b), f a) -⁠> f b
+        // ap(f, g) = \x -> f( x (g x))
+        //
         // Haskell
         // (<*>) :: f (a -> b) -> f a -> f b
-        //
-        // instance Applicative (->) r
-        //     (<*>) :: (a -> (a0 -> b)) -> (a -> a0) -> a -> b
-        //     (<*>) f g = \x -> f( x (g x))
+        // (<*>) :: (r -> (a -> b)) -> (r -> a) -> (r -> b)
+        // (<*>) f g = \x -> f( x (g x))
         fa = transform(fa);
-        return fa.ap(this);
+        let fab = this;
+        return fa.ap(fab);
     }
 
-    chain(amb) {
+    cchain(arb) {
         // (>>=) :: m a -> (a -> m b) -> m b
-        // (>>=) :: (r -> a) -> (a -> (r -> b)) -> r -> b
-        let ma = this;
-        amb = Curry.from(amb);
-        let rb = (r) => {
-            let a = ma(r);
-            let b = amb(a, r);
+        // (>>=) :: (r -> a) -> (a -> (r -> b)) -> (r -> b)
+        let ra = this;
+        arb = Curry.from(arb);
+        let function_chain_rb = (r) => {
+            let a = ra(r);
+            let b = arb(a, r);
             return b;
         };
-        let rb1 = Curry.from(rb);
-        return rb1;
+        let rb = Curry.from(function_chain_rb);
+        return rb;
     }
 }
+
+Curry.map = Curry.from(function map(ab, fa) {
+    // Haskell (<$>) :: Functor f => (a -> b) -> f a -> f b
+    // map :: (b -> c) -> (a -> b) -> a -> c
+    // compose :: Semigroupoid c => (c j k, c i j) -⁠> c i k
+    return Curry.from(fa).map(ab);
+});
 
 function currying(bound, ...args) {
     let fn = bound.fn;
@@ -156,5 +163,6 @@ function curry(fn, arity, applyThis, prependArgs) {
     //
     return instance;
 }
+
 
 export {Curry};

@@ -74,20 +74,20 @@ module.exports = {
                 loader: 'babel-loader',
                 include: [path.resolve(__dirname, 'src')],
                 options: {
-                    // Explicitly disable babelrc so we don't catch various config
-                    // in much lower dependencies.
+                    // Explicitly disable babelrc so we don't catch various config in much lower dependencies.
                     babelrc: true,
                 }
             },
             {
                 test: /test\.js$/,
-                use: 'mocha-loader',
                 exclude: /node_modules/,
+                use: ['mocha-loader'],
             },
             {
                 test: /\.css$/,
                 use: [
-                    /* MiniCssExtractPlugin.loader, */ 'style-loader',
+                    // MiniCssExtractPlugin.loader,
+                    'style-loader',
                     'css-loader'
                 ]
             },

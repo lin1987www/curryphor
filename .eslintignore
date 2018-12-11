@@ -1,3 +1,5 @@
+# ESLint do test need .eslintignore, it is not limit by package.json files setting.
+# Build
 node_modules/*
 build/*
 dist/*

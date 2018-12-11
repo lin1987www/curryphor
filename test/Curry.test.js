@@ -203,4 +203,84 @@ describe('Curry', function () {
             assert.equal(result, (10 + 90) / 10);
         });
     });
+    describe('#chainRec', function () {
+        /*
+        it('test', function () {
+            // TAG :: Symbol
+            const TAG = Symbol('TAG');
+            // tag :: t -> x -> x
+            const tag = (tag_t, tag_x) =>
+                Object.assign(tag_x, {[TAG]: tag_t});
+            // is :: t -> x -> bool
+            const is = (is_t, is_x) =>
+                is_x && is_x[TAG] === is_t;
+            // run :: x -> x ?
+            const run = run_x =>
+                tag(run, run_x);
+            // call :: f -> x ?
+            const call = (call_f, call_x) =>
+                tag(call, {f: call_f, x: call_x});
+            // trampoline :: t -> t
+            const trampoline = trampoline_t => {
+                let acc = trampoline_t;
+                while (is(call, acc))
+                    acc = acc.f(acc.x);
+                return acc;
+            };
+            // continuation :: f -> g ?
+            const cont = cont_f => cont_g =>
+                is(run, cont_g)
+                    ? trampoline(cont_f(cont_g))
+                    : cont(
+                    cont_cont_k => call(cont_f,
+                        cont_cont_x =>
+                            call(cont_g(cont_cont_x), cont_cont_k))
+                    );
+            // of ::
+            const of = of_x =>
+                cont(of_k =>
+                    of_k(of_x));
+            // chainRec ::  ChainRec m => f -> a -> m b
+            // chainRec ::  ChainRec m => (((a -> c) -> (b -> c) -> a) -> m c) -> a -> m b
+            const chainRec = chainRec_f => chainRec_x =>
+                chainRec_f(
+                    chainRec(chainRec_f),    // next :: (a -> c)
+                    of,             // done :: (b -> c)
+                    chainRec_x               // init :: a
+                );
+            // identity :: x -> x
+            const identity = identity_x => identity_x;
+            // inc :: x -> x
+            const inc = inc_x => inc_x + 1;
+            // repeat :: n -> f -> x ?
+            const repeat = repeat_n => repeat_f => repeat_x =>
+                chainRec(
+                    (loop, done, [n, x]) =>
+                        n === 0
+                            ? of(x)(done)
+                            : of([n - 1, repeat_f(x)])(loop)
+                )(
+                    [repeat_n, repeat_x]
+                )(
+                    run(identity)
+                );
+
+            console.log(repeat(1e3)(inc)(0));
+            // 1000
+            console.log(repeat(1e6)(inc)(0));
+            // Error: Uncaught RangeError: Maximum call stack size exceeded
+        });
+        it('run', function () {
+            // TAG :: Symbol
+            const TAG = Symbol('TAG');
+            // tag :: t -> x -> x
+            const tag = (t, x) =>
+                Object.assign(x, {[TAG]: t});
+            const run = x =>
+                tag(run, x);
+
+            var run1 = run(x => x);
+        });
+        */
+    });
 });

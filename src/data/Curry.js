@@ -2,7 +2,7 @@ import {transform} from '../utility';
 import {mix} from '../mix';
 import {Monad} from '../type/Monad';
 
-const CurryBase = mix('CurryImplement', [Monad, Function], Function);
+const CurryBase = mix('CurryBase', [Monad, Function], Function);
 
 class Curry extends CurryBase {
 
@@ -153,7 +153,7 @@ function curry(fn, arity, applyThis, prependArgs) {
     bound.arity = arity;
     bound.applyThis = applyThis;
     bound.prependArgs = prependArgs;
-    //
+    // bind functions
     let p = Curry.prototype;
     instance.map = p.map.bind(instance);
     instance.fmap = p.fmap.bind(instance);

@@ -74,5 +74,4 @@ npm install -save-dev @babel/plugin-syntax-dynamic-import @babel/plugin-syntax-i
 
 ESLint  安裝好後記得 Enable
 npm install --save-dev eslint-config-scratch eslint@3 babel-eslint@7
-npm install --save-dev eslint-plugin-import
 npx eslint --init

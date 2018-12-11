@@ -6,7 +6,7 @@ import {Monoid} from '../type/Monoid';
 import {Monad} from '../type/Monad';
 import {Traversable} from '../type/Traversable';
 
-const ListBase = mix('ListImplement', [Foldable, Monoid, Monad, Traversable, Array], Array);
+const ListBase = mix('ListBase', [Foldable, Monoid, Monad, Traversable, Array], Array);
 
 class List extends ListBase {
 
@@ -15,16 +15,16 @@ class List extends ListBase {
     }
 
     static of(...args) {
-        return createList(Array.of(...args));
+        return create(Array.of(...args));
     }
 
     static from(...args) {
-        return createList(Array.from(...args));
+        return create(Array.from(...args));
     }
 
     constructor(...args) {
         super();
-        return createList(new Array(...args), this);
+        return create(new Array(...args), this);
     }
 
     map(ab) {
@@ -169,11 +169,10 @@ class List extends ListBase {
 }
 
 
-function createList(array, instance) {
+function create(array, instance) {
     instance = instance || Object.create(List.prototype);
     Object.setPrototypeOf(array, instance);
-    // bind with subThis
-
+    // bind functions
     let p = List.prototype;
     // Monad
     instance.map = p.map.bind(array);
@@ -190,7 +189,6 @@ function createList(array, instance) {
     instance.reduceRight = p.reduceRight.bind(array);
     // Traversable
     instance.traverse = p.traverse.bind(array);
-    // return subThis instance to replace this
     return array;
 }
 
